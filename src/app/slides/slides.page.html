@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>WristMate</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="main-page">
+  <p>Slides page works!</p>
+  <ion-grid>
+    <ion-row
+      ><ion-col class="slide" size-md="4" offset-md="6">
+        <ion-slides pager="true" [options]="slideOpts">
+          <ion-slide class="" *ngFor="let slide of slides">
+            <ion-avatar [routerLink]="['./', slide.title.toLowerCase()]">
+              <ion-img [src]="slide.imageUrl"> </ion-img>
+            </ion-avatar>
+
+            <ion-footer>
+              <ion-label>{{slide.title}}</ion-label>
+              <ion-card-subtitle>{{slide.subtitle}}</ion-card-subtitle>
+            </ion-footer>
+          </ion-slide>
+        </ion-slides>
+      </ion-col></ion-row
+    >
+  </ion-grid>
+</ion-content>

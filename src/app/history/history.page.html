@@ -1,0 +1,16 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>History</ion-title>
+    <ion-button [routerLink]="['../']">Back</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list-header>Discovered devices</ion-list-header>
+  <ion-button (click)="scan()">Scan</ion-button>
+  <ion-list *ngFor="let peripheral of peripherals">
+    <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
+    <ion-label>{{statusMessage}}</ion-label>
+  </ion-list>
+  <div (click)="connect(peripherals[0])">{{peripherals}}</div>
+</ion-content>

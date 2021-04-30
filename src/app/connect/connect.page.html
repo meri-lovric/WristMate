@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Connect</ion-title>
+    <ion-button [routerLink]="['../']" slot="end">Back</ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button (click)="scan()"
+    >Scan <ion-icon name="bluetooth"></ion-icon
+  ></ion-button>
+  <ion-button (click)="read()">Read</ion-button>
+  <ion-button (click)="disconnect()">Disconnect <ion-icon name="stop"></ion-icon></ion-button>
+  <ion-list-header>Discovered devices</ion-list-header>
+  <ion-list>
+    <ion-card-content *ngFor="let peripheral of peripherals">
+      <p (click)="connect(peripheral.id)">{{peripheral.name || "Unnamed"}}</p>
+      <p>{{peripheral.id}}</p>
+      <p>RSSI: + {{peripheral.rssi}}</p>
+    </ion-card-content>
+    <!--  <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
+    -->
+    <!-- <ion-label>Status message: {{statusMessage}}</ion-label>
+   --></ion-list
+  >
+  <ion-list>
+    <ion-card-content *ngFor="let response of responses">
+     <p>{{response}}</p>
+    </ion-card-content>
+    <!--  <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
+    -->
+    <!-- <ion-label>Status message: {{statusMessage}}</ion-label>
+   --></ion-list
+  >
+  <!-- <div (click)="connect(peripherals[0])">Donji izbornik: {{peripherals}}</div>
+ --></ion-content
+>
