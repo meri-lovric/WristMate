@@ -6,11 +6,54 @@
 </ion-header>
 
 <ion-content>
-  <ion-list-header>Discovered devices</ion-list-header>
-  <ion-button (click)="scan()">Scan</ion-button>
-  <ion-list *ngFor="let peripheral of peripherals">
-    <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
-    <ion-label>{{statusMessage}}</ion-label>
-  </ion-list>
-  <div (click)="connect(peripherals[0])">{{peripherals}}</div>
-</ion-content>
+  <ion-button (click)="read()">Read</ion-button>
+  <ion-list-header>Meausured values</ion-list-header>
+  <!-- <ion-card *ngIf="currentValue < 35">
+    <ion-card-content class="blue">{currentValue</ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="currentValue > 36.5 && currentValue < 37.5">
+    <ion-card-content class="green">{currentValue</ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="currentValue >= 37.5 && currentValue < 38.3">
+    <ion-card-content class="blue">{currentValue</ion-card-content>
+  </ion-card>
+  <ion-card *ngIf="currentValue < 35">
+    <ion-card-content class="blue">{currentValue</ion-card-content>
+  </ion-card>
+
+  <ion-card
+    *ngIf="currentValue < 35 ? hypothermia: currentValue > 36.5 && currentValue < 37.5 ? normal : currentValue > 35.7 && currentValue < 38.3 ? fever : hyperthermia"
+  >
+    <ng-template #hypothermia>
+      <ion-card-content class="blue">{{currentValue}}</ion-card-content>
+    </ng-template>
+    <ng-template #normal>
+      <ion-card-content class="green">{{currentValue}}</ion-card-content>
+    </ng-template>
+    <ng-template #fever>
+      <ion-card-content class="orange">{{currentValue}}</ion-card-content>
+    </ng-template>
+    <ng-template #hyperthermia>
+      <ion-card-content class="red">{{currentValue}}</ion-card-content>
+    </ng-template>
+  </ion-card> -->
+
+  <!-- <ion-list>
+   -->
+  <ion-card *ngFor="let value of values">
+    <ion-card-content *ngIf="value < 35.5">
+      <p class="blue">{{value}}</p>
+    </ion-card-content>
+    <ion-card-content *ngIf="value >= 35.5 && value < 37.5">
+      <p class="green">{{value}}</p>
+    </ion-card-content>
+    <ion-card-content *ngIf="value >= 37.5 && value < 38.3">
+      <p class="orange">{{value}}</p>
+    </ion-card-content>
+    <ion-card-content *ngIf="value >= 38.3">
+      <p class="red">{{value}}</p>
+    </ion-card-content>
+  </ion-card>
+  <!--  </ion-list>
+ --></ion-content
+>

@@ -6,11 +6,16 @@
 </ion-header>
 
 <ion-content>
-  <ion-list-header>Discovered devices</ion-list-header>
-  <ion-button (click)="scan()">Scan</ion-button>
-  <ion-list *ngFor="let peripheral of peripherals">
-    <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
-    <ion-label>{{statusMessage}}</ion-label>
-  </ion-list>
-  <div (click)="connect(peripherals[0])">{{peripherals}}</div>
+  <ion-content>
+    <ion-list-header color="light">Vertical Bar Chart</ion-list-header>
+    <ion-card class="welcome-card">
+      <ion-card-header>
+        <ion-card-subtitle>Number of Viewers per season for</ion-card-subtitle>
+        <ion-card-title>Game of Thrones</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <canvas #barChart></canvas>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
 </ion-content>

@@ -1,5 +1,10 @@
+ion-slides{
+  height:100%;
+  margin-top: 10vh
+}
 .swiper-slide {
   height: 50vh;
+  width:-webkit-fill-available;
   display: grid;
   grid-template-rows: 65% 35%;
   grid-template-columns: 100%;
@@ -12,7 +17,7 @@
 }
 ion-footer {
   display: flex;
-  justify-content: start;
+  flex-direction: column;
   overflow: hidden;
   height: 100%;
   background-color: whitesmoke;
@@ -30,13 +35,18 @@ ion-label {
   margin-top: 5%;
   margin-left: 5%;
   color: black;
+  text-align: start;
 }
 ion-avatar {
-  height: 25%;
-  width: 25%;
-  block-size: fit-content;
+  width: 75%;
+  height: 75%;
 }
 ion-card-subtitle {
-  margin-top: 10%;
+  margin-top: 5%;
   color: grey;
 }
+ion-icon{
+  width: 100%;
+  height:90%
+}
+

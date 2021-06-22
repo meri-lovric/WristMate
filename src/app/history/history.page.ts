@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { BLE } from '@ionic-native/ble/';
 import { NavController, NavParams } from '@ionic/angular';
+import { Chart } from 'chart.js';
 
 @Component({
   selector: 'app-historx',
@@ -8,32 +9,41 @@ import { NavController, NavParams } from '@ionic/angular';
   styleUrls: ['./history.page.scss'],
 })
 export class HistoryPage implements OnInit {
-  peripherals: string[] = [];
-  statusMessage: string;
+  @ViewChild('barChart') barChart;
+
+  bars: any;
+  colorArray: any;
   constructor() {}
 
-  ngOnInit(): void {
-    this.statusMessage = 'disconnected';
+  ngOnInit(): void {}
+
+  ionViewDidEnter() {
+    this.createBarChart();
   }
-  scan() {
-    BLE.scan([], 4).subscribe((device) => {
-      console.log(device);
-      if (device && device.name) {
-        this.peripherals = [...this.peripherals, device.name];
-        this.statusMessage = this.peripherals.reduce((a, b) => a + ', ' + b);
-        console.log(this.statusMessage);
-      }
-    });
-  }
-  connect(device: string) {
-    BLE.connect(device).subscribe(
-      (peripheralData) => {
-        console.log(peripheralData);
-        this.statusMessage = 'connected';
+  createBarChart() {
+    this.bars = new Chart(this.barChart.nativeElement, {
+      type: 'line',
+      data: {
+        labels: ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8'],
+        datasets: [
+          {
+            label: 'Viewers in millions',
+            data: [2.5, 3.8, 5, 6.9, 6.9, 7.5, 10, 17],
+            backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+            borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+            borderWidth: 1,
+          },
+        ],
       },
-      (peripheralData) => {
-        console.log('disconnected');
-      }
-    );
+      options: {
+        /* scales: {
+          xAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        } */
+      },
+    });
   }
 }

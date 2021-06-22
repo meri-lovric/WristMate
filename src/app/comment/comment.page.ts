@@ -1,39 +1,52 @@
-import { Component, OnInit } from '@angular/core';
-import { BLE } from '@ionic-native/ble/';
-import { NavController, NavParams } from '@ionic/angular';
-
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  AfterContentInit,
+} from '@angular/core';
+import { NavController } from '@ionic/angular';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+declare const google;
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.page.html',
   styleUrls: ['./comment.page.scss'],
 })
-export class CommentPage implements OnInit {
-  peripherals: string[] = [];
-  statusMessage: string;
-  constructor() {}
-
+export class CommentPage implements OnInit, AfterContentInit {
+  @ViewChild('mapElement') mapElement;
+  map;
+  constructor(private geolocation: Geolocation) {}
   ngOnInit(): void {
-    this.statusMessage = 'disconnected';
+    this.findLocation();
   }
-  scan() {
-    BLE.scan([], 4).subscribe((device) => {
-      console.log(device);
-      if (device && device.name) {
-        this.peripherals = [...this.peripherals, device.name];
-        this.statusMessage = this.peripherals.reduce((a, b) => a + ', ' + b);
-        console.log(this.statusMessage);
-      }
+  ngAfterContentInit(): void {
+    this.map = new google.maps.Map(this.mapElement.nativeElement, {
+      center: { lat: 41.1826, lng: -8.5581 },
+      zoom: 8,
     });
   }
-  connect(device: string) {
-    BLE.connect(device).subscribe(
-      (peripheralData) => {
-        console.log(peripheralData);
-        this.statusMessage = 'connected';
-      },
-      (peripheralData) => {
-        console.log('disconnected');
-      }
-    );
+  findLocation() {
+    this.geolocation
+      .getCurrentPosition()
+      .then((resp) => {
+        console.log(
+          'LAT,LONG: ',
+          resp.coords.latitude,
+          '-',
+          resp.coords.longitude
+        );
+        // resp.coords.latitude
+        // resp.coords.longitude
+      })
+      .catch((error) => {
+        console.log('Error getting location', error);
+      });
+    const watch = this.geolocation.watchPosition();
+    watch.subscribe((data) => {
+      // data can be a set of coordinates, or an error (if an error occurred).
+      // data.coords.latitude
+      // data.coords.longitude
+    });
   }
 }

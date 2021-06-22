@@ -13,6 +13,8 @@ export class ConnectPage implements OnInit {
   connectedDevice: string;
   characteristics: string;
   responses: any[] = [];
+  readValue = '';
+  values: any[] = [];
   constructor(private ble: BLE, private ngZone: NgZone) {}
 
   ngOnInit(): void {
@@ -33,9 +35,10 @@ export class ConnectPage implements OnInit {
     });
   }
   connect(device: string) {
-    this.ble.connect('D6:63:90:E4:A9:B2').subscribe(
+    this.ble.connect(device).subscribe(
       (peripheralData) => {
         console.log(peripheralData);
+        this.connectedDevice = device;
       },
       (peripheralData) => {
         console.log('disconnected');
@@ -47,24 +50,41 @@ export class ConnectPage implements OnInit {
     //const view1 = new DataView(buffer);
     //TEMPERATURE
     this.ble
-      .startNotification('D6:63:90:E4:A9:B2', '6e400001-b5a3-f393-e0a9-e50e24dcca9e', '6e400003-b5a3-f393-e0a9-e50e24dcca9e')
+      .startNotification(
+        'D6:63:90:E4:A9:B2',
+        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+        '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+      )
       .subscribe((buffer) => {
         this.responses.push(buffer[0]);
-         console.log('TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0])));
-      });
-      // SUPPOSED TO BE HRV, BUT SEEMS TO BE TEMP ALSO
-      this.ble
-      .startNotification('D6:63:90:E4:A9:B2', '0000180d-0000-1000-8000-00805f9b34fb', '00002a37-0000-1000-8000-00805f9b34fb')
-      .subscribe((buffer) => {
-        this.responses.push(buffer[0]);
-         console.log('HRV: '+String.fromCharCode.apply(null, new Uint8Array(buffer[0])));
-      });
-    /* this.ble.read('D6:63:90:E4:A9:B2', '180D', '2A37').then((data) => {
+        console.log(
+          'TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+        );
+        this.readValue = String.fromCharCode
+          .apply(null, new Uint8Array(buffer[0]))
+          .slice(14);
+        console.log('STR2: ' + this.readValue.slice(0, 5));
+        this.values.push(this.readValue.slice(0, 5));
+      }); /* this.ble.read('D6:63:90:E4:A9:B2', '180D', '2A37').then((data) => {
       const strData = String.fromCharCode.apply(null, new Uint8Array(data));
       const bl = strData;
       alert('other thing9:' + bl);
       console.log('other thing9:' + bl);
     }); */
+    // SUPPOSED TO BE HRV, BUT SEEMS TO BE TEMP ALSO
+    /*  this.ble
+      .startNotification(
+        'D6:63:90:E4:A9:B2',
+        '0000180d-0000-1000-8000-00805f9b34fb',
+        '00002a37-0000-1000-8000-00805f9b34fb'
+      )
+      .subscribe((buffer) => {
+        this.responses.push(buffer[0]);
+        console.log(
+          'HRV: ' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+        );
+      });
+    */
     /*  this.ble
       .read('D6:63:90:E4:A9:B2', '1800', '2a00')
       .then((data) => {

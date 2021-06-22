@@ -9,29 +9,39 @@
   <ion-button (click)="scan()"
     >Scan <ion-icon name="bluetooth"></ion-icon
   ></ion-button>
-  <ion-button (click)="read()">Read</ion-button>
-  <ion-button (click)="disconnect()">Disconnect <ion-icon name="stop"></ion-icon></ion-button>
+  <ion-button (click)="disconnect()"
+    >Disconnect <ion-icon name="stop"></ion-icon
+  ></ion-button>
   <ion-list-header>Discovered devices</ion-list-header>
   <ion-list>
     <ion-card-content *ngFor="let peripheral of peripherals">
       <p (click)="connect(peripheral.id)">{{peripheral.name || "Unnamed"}}</p>
-      <p>{{peripheral.id}}</p>
-      <p>RSSI: + {{peripheral.rssi}}</p>
+      <p>
+        {{peripheral.id}}
+        <ion-icon
+          *ngIf="peripheral.id === connectedDevice"
+          name="checkmark-outline"
+          class="good-signal"
+        ></ion-icon>
+      </p>
+      <p>
+        RSSI: + {{peripheral.rssi}} ><ion-icon
+          *ngIf="peripheral.rssi < -90; else goodSignal"
+          name="bar-chart"
+          slot="end"
+          class="poor-signal"
+        ></ion-icon
+        ><ng-template #goodSignal>
+          <ion-icon name="bar-chart" slot="end" class="good-signal"></ion-icon
+        ></ng-template>
+      </p>
     </ion-card-content>
     <!--  <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
     -->
     <!-- <ion-label>Status message: {{statusMessage}}</ion-label>
    --></ion-list
   >
-  <ion-list>
-    <ion-card-content *ngFor="let response of responses">
-     <p>{{response}}</p>
-    </ion-card-content>
-    <!--  <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
-    -->
-    <!-- <ion-label>Status message: {{statusMessage}}</ion-label>
-   --></ion-list
-  >
+
   <!-- <div (click)="connect(peripherals[0])">Donji izbornik: {{peripherals}}</div>
  --></ion-content
 >
