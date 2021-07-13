@@ -1,7 +1,8 @@
-<ion-header>
+<ion-header background="#ffff">
   <ion-toolbar>
     <ion-title>WristMate</ion-title>
   </ion-toolbar>
+  <ion-button (click)="presentModal()">Settings</ion-button>
 </ion-header>
 
 <ion-content id="main-page">
@@ -9,12 +10,29 @@
     <ion-row
       ><ion-col class="slide" size-md="4" offset-md="6">
         <ion-slides pager="true" [options]="slideOpts">
-          <ion-slide class="" *ngFor="let slide of slides" [ngSwitch]="true" [routerLink]="['./', slide.title.toLowerCase()]">
+          <ion-slide
+            class=""
+            *ngFor="let slide of slides"
+            [ngSwitch]="true"
+            [routerLink]="['./', slide.title.toLowerCase()]"
+          >
             <ion-avatar>
-              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'connect'" name="bluetooth-outline"></ion-icon>
-              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'read'" name="watch-outline"></ion-icon>
-              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'comment'" name="chatbubble-outline"></ion-icon>
-              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'history'" name="pulse-outline"></ion-icon>
+              <ion-icon
+                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'connect'"
+                name="bluetooth-outline"
+              ></ion-icon>
+              <ion-icon
+                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'read'"
+                name="watch-outline"
+              ></ion-icon>
+              <ion-icon
+                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'comment'"
+                name="chatbubble-outline"
+              ></ion-icon>
+              <ion-icon
+                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'history'"
+                name="pulse-outline"
+              ></ion-icon>
             </ion-avatar>
             <ion-footer>
               <ion-label>{{slide.title}}</ion-label>

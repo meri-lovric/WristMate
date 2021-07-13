@@ -1,0 +1,76 @@
+<p>
+  <ion-button (click)="dismiss()">Close</ion-button>
+  settings works!
+</p>
+<ion-content>
+  <p *ngIf="submitAttempt" style="color: #ea6153">
+    Please fill out all details accurately.
+  </p>
+
+  <ion-list lines="none">
+    <form [formGroup]="commentForm">
+      <ion-item>
+        <ion-label position="floating">First Name</ion-label>
+        <ion-input
+          formControlName="firstName"
+          type="text"
+          [class.invalid]="
+            !commentForm.controls.firstName.valid &&
+            (commentForm.controls.firstName.dirty || submitAttempt)
+          "
+        ></ion-input>
+      </ion-item>
+
+      <ion-item
+        *ngIf="
+          !commentForm.controls.firstName.valid &&
+          (commentForm.controls.firstName.dirty || submitAttempt)
+        "
+      >
+        <p>Please enter a valid name.</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Last Name</ion-label>
+        <ion-input
+          formControlName="lastName"
+          type="text"
+          [class.invalid]="
+            !commentForm.controls.lastName.valid &&
+            (commentForm.controls.age.dirty || submitAttempt)
+          "
+        ></ion-input>
+      </ion-item>
+
+      <ion-item
+        *ngIf="
+          !commentForm.controls.lastName.valid &&
+          (commentForm.controls.lastName.dirty || submitAttempt)
+        "
+      >
+        <p>Please enter a valid name.</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Age</ion-label>
+        <ion-input
+          formControlName="age"
+          type="number"
+          [class.invalid]="
+            !commentForm.controls.age.valid &&
+            (commentForm.controls.age.dirty || submitAttempt)
+          "
+        ></ion-input>
+      </ion-item>
+
+      <ion-item
+        *ngIf="
+          !commentForm.controls.age.valid &&
+          (commentForm.controls.age.dirty || submitAttempt)
+        "
+      >
+        <p>Please enter a valid age.</p>
+      </ion-item>
+    </form>
+  </ion-list>
+</ion-content>

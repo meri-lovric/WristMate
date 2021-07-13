@@ -1,5 +1,29 @@
-ion-input{
+p {
+  font-size: 0.8em;
+  color: #d2d2d2;
+}
+
+ion-slides {
+  height: 100%;
+}
+
+ion-slide {
+  display: block;
+}
+
+ion-label,
+.select-text {
+  margin-left: 10px;
+}
+
+.invalid {
+  border: 1px solid #ea6153;
+}
+
+ion-card-content {
+  display: inline-block;
+  margin-left: 2%;
+  margin-right: 2%;
+  width: calc(500px + 6 * ((100vw - 320px) / 680));
   height: 25vh;
-  margin-top:5em;
-  background-color: white;
 }

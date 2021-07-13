@@ -1,6 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { BLE } from '@ionic-native/ble/ngx';
-import { NavController, NavParams } from '@ionic/angular';
+import { NavController, NavParams, ModalController } from '@ionic/angular';
+import { ConnectedDeviceComponent } from '../connected-device/connected-device.component';
 
 @Component({
   selector: 'app-connect',
@@ -15,7 +16,11 @@ export class ConnectPage implements OnInit {
   responses: any[] = [];
   readValue = '';
   values: any[] = [];
-  constructor(private ble: BLE, private ngZone: NgZone) {}
+  constructor(
+    private ble: BLE,
+    private ngZone: NgZone,
+    public modalController: ModalController
+  ) {}
 
   ngOnInit(): void {
     this.statusMessage = 'disconnected';
@@ -39,6 +44,7 @@ export class ConnectPage implements OnInit {
       (peripheralData) => {
         console.log(peripheralData);
         this.connectedDevice = device;
+        this.presentModal();
       },
       (peripheralData) => {
         console.log('disconnected');
@@ -385,6 +391,24 @@ export class ConnectPage implements OnInit {
     this.ble.disconnect('D6:63:90:E4:A9:B2').then(() => {
       console.log('Disconnected');
     });
+  }
+  async presentModal() {
+    console.log(this.connectedDevice);
+    const modal = await this.modalController.create({
+      component: ConnectedDeviceComponent,
+      cssClass: 'my-custom-class',
+    });
+    return await modal.present();
+  }
+  listConnectedDevices() {
+    this.ble.bondedDevices().then(
+      (result) => {
+        console.log('Bonded devices: ', result);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }
 /*  this.ble.connect(device).subscribe(

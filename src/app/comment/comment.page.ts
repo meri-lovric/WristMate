@@ -1,52 +1,44 @@
 import {
   Component,
-  OnInit,
   ElementRef,
   ViewChild,
-  AfterContentInit,
+
 } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-declare const google;
+import { GoogleMapsComponent } from '../google-maps/google-maps.component';
+
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.page.html',
   styleUrls: ['./comment.page.scss'],
 })
-export class CommentPage implements OnInit, AfterContentInit {
-  @ViewChild('mapElement') mapElement;
-  map;
-  constructor(private geolocation: Geolocation) {}
-  ngOnInit(): void {
-    this.findLocation();
-  }
-  ngAfterContentInit(): void {
-    this.map = new google.maps.Map(this.mapElement.nativeElement, {
-      center: { lat: 41.1826, lng: -8.5581 },
-      zoom: 8,
+export class CommentPage{
+  @ViewChild(GoogleMapsComponent) mapComponent: GoogleMapsComponent;
+
+	public commentForm: FormGroup;
+  public submitAttempt: boolean = false;
+  constructor(public formBuilder: FormBuilder){
+    this.commentForm = formBuilder.group({
+      firstName: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+      lastName: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
+      age:['']
     });
   }
-  findLocation() {
-    this.geolocation
-      .getCurrentPosition()
-      .then((resp) => {
-        console.log(
-          'LAT,LONG: ',
-          resp.coords.latitude,
-          '-',
-          resp.coords.longitude
-        );
-        // resp.coords.latitude
-        // resp.coords.longitude
-      })
-      .catch((error) => {
-        console.log('Error getting location', error);
-      });
-    const watch = this.geolocation.watchPosition();
-    watch.subscribe((data) => {
-      // data can be a set of coordinates, or an error (if an error occurred).
-      // data.coords.latitude
-      // data.coords.longitude
-    });
+  save(){
+    this.submitAttempt = true;
+    if(!this.commentForm.valid){
+      console.log("Invalid submit form");
+      alert("Invalid submit form");
+    }else{
+      console.log("Success");
+      console.log("Send to database");
+    }
   }
+  testMarker(){
+
+    let center = this.mapComponent.map.getCenter();
+    this.mapComponent.addMarker(center.lat(), center.lng());
+
+}
 }

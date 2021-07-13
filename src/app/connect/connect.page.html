@@ -12,8 +12,10 @@
   <ion-button (click)="disconnect()"
     >Disconnect <ion-icon name="stop"></ion-icon
   ></ion-button>
+
   <ion-list-header>Discovered devices</ion-list-header>
   <ion-list>
+    <ion-button (click)="listConnectedDevices()">List all devices</ion-button>
     <ion-card-content *ngFor="let peripheral of peripherals">
       <p (click)="connect(peripheral.id)">{{peripheral.name || "Unnamed"}}</p>
       <p>
