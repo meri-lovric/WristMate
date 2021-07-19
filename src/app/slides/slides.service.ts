@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Slide } from './slide.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SlidesService {
   private slides: Slide[] = [
@@ -26,9 +26,14 @@ export class SlidesService {
       title: 'History',
       subtitle: ['Display collected data'],
     },
+    {
+      id: 'slide5',
+      title: 'Multiple devices',
+      subtitle: ['Monitor multiple connected devices'],
+    },
   ];
-  constructor() { }
-  getAllSlides(){
+  constructor() {}
+  getAllSlides() {
     return [...this.slides];
   }
 }

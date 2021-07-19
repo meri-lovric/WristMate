@@ -41,6 +41,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('./history/history.module').then((m) => m.HistoryPageModule),
       },
+      {
+        path: 'multiple-devices',
+        loadChildren: () =>
+          import('./multiple-devices/multiple-devices.module').then(
+            (m) => m.MultipleDevicesPageModule
+          ),
+      },
     ],
   },
 

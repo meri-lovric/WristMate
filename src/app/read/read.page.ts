@@ -92,7 +92,7 @@ export class ReadPage implements OnInit {
           .slice(14);
         const tempReading = {
           key: new Date().getTime(),
-          value: this.readValue.slice(28, 33),
+          value: this.readValue,
           time: this.now.toUTCString(),
         };
         //this.currentValue = Number(this.readValue);
