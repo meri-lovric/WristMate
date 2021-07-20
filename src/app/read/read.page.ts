@@ -18,6 +18,7 @@ export class ReadPage implements OnInit {
   readValue = '';
   currentValue: number;
   values: number[] = [];
+  connectedDevicesList: string;
   /* tempReading: Temperature = {
     $key: null,
     value: '',
@@ -45,8 +46,16 @@ export class ReadPage implements OnInit {
     return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
   }
   connectedDevices() {
+    this.slidesService.changeMessage('new message');
     console.log(this.slidesService.currentMessage);
+    this.slidesService.currentMessage.pipe()  //this will limit the observable to only one value
+      .subscribe((currentMessage: string) => {
+        this.connectedDevicesList = currentMessage; //assigning value 
+      });
+    console.log(this.connectedDevicesList); //accessing the value 
   }
+
+
   scan() {
     this.ble.scan([], 4).subscribe((device) => {
       console.log(device);

@@ -39,7 +39,7 @@ export class SlidesPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.slides = this.slidesService.getAllSlides();
-    this.subscription = this.slidesService.currentMessage.subscribe(message => this.message = message)
+    this.subscription = this.slidesService.currentMessage.subscribe(message => this. = message)
     this.ble.isEnabled().then(
       () => {
         console.log('Bluetooth enabled');

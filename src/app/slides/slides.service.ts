@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Slide } from './slide.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SlidesService {
+  
+  private messageSource = new BehaviorSubject([]);
+  currentMessage = this.messageSource.asObservable();
   private slides: Slide[] = [
     {
       id: 'slide1',
@@ -35,5 +39,10 @@ export class SlidesService {
   constructor() {}
   getAllSlides() {
     return [...this.slides];
+  }
+  changeMessage(message: Object) {
+    let messages: Object[];
+    messages.push(message);
+    this.messageSource.next(messages)
   }
 }
