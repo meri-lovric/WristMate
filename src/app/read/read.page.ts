@@ -5,6 +5,7 @@ import { NavController, NavParams, ToastController } from '@ionic/angular';
 import { Temperature } from '../../templates/Temperature';
 import { TemperatureService } from './temperature.service';
 import { v4 as uuidv4 } from 'uuid';
+import { SlidesService } from '../slides/slides.service';
 
 @Component({
   selector: 'app-read',
@@ -27,7 +28,9 @@ export class ReadPage implements OnInit {
     private ble: BLE,
     private ngZone: NgZone,
     private tempService: TemperatureService,
-    public toastController: ToastController
+    public toastController: ToastController,
+    private slidesService: SlidesService,
+
   ) {
     setInterval(() => {
       this.now = new Date();
@@ -40,6 +43,9 @@ export class ReadPage implements OnInit {
   getNowUTC() {
     const now = new Date();
     return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+  }
+  connectedDevices() {
+    console.log(this.slidesService.currentMessage);
   }
   scan() {
     this.ble.scan([], 4).subscribe((device) => {
@@ -144,7 +150,7 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
@@ -159,7 +165,7 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION2:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
@@ -170,7 +176,7 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION3:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
@@ -181,7 +187,7 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION4:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }

@@ -1,17 +1,20 @@
-import { Component, OnInit, NgZone } from '@angular/core';
+import { Component, OnInit, NgZone, OnDestroy } from '@angular/core';
 import { BLE } from '@ionic-native/ble/ngx';
 import { NavController, NavParams, ModalController } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { ConnectedDeviceComponent } from '../connected-device/connected-device.component';
-
+import { SlidesService } from '../slides/slides.service';
 @Component({
   selector: 'app-connect',
   templateUrl: './connect.page.html',
   styleUrls: ['./connect.page.scss'],
 })
-export class ConnectPage implements OnInit {
+export class ConnectPage implements OnInit, OnDestroy {
   peripherals: any[] = [];
   statusMessage: string;
   connectedDevice: string;
+  message: string;
+  subscription: Subscription;
   characteristics: string;
   responses: any[] = [];
   readValue = '';
@@ -19,11 +22,16 @@ export class ConnectPage implements OnInit {
   constructor(
     private ble: BLE,
     private ngZone: NgZone,
-    public modalController: ModalController
-  ) {}
-
-  ngOnInit(): void {
+    public modalController: ModalController,
+    private slidesService: SlidesService,
+  ) { }
+  ngOnInit() {
+    this.subscription = this.slidesService.currentMessage.subscribe(message => this.message = message)
     this.statusMessage = 'disconnected';
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
   scan() {
     this.peripherals = [];
@@ -45,6 +53,7 @@ export class ConnectPage implements OnInit {
         console.log(peripheralData);
         this.connectedDevice = device;
         this.presentModal();
+        this.slidesService.changeMessage("Hello from Sibling");
       },
       (peripheralData) => {
         console.log('disconnected');

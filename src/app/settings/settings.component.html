@@ -1,6 +1,8 @@
 <p>
   <ion-button (click)="dismiss()">Close</ion-button>
   settings works!
+  <ion-input type="text" [(ngModel)]="bracelet_name" text-right id="input" ></ion-input>
+  <ion-button (click)="change_name(bracelet_name)">Change Name</ion-button>
 </p>
 <ion-content>
   <p *ngIf="submitAttempt" style="color: #ea6153">
@@ -11,64 +13,46 @@
     <form [formGroup]="commentForm">
       <ion-item>
         <ion-label position="floating">First Name</ion-label>
-        <ion-input
-          formControlName="firstName"
-          type="text"
-          [class.invalid]="
+        <ion-input formControlName="firstName" type="text" [class.invalid]="
             !commentForm.controls.firstName.valid &&
             (commentForm.controls.firstName.dirty || submitAttempt)
-          "
-        ></ion-input>
+          "></ion-input>
       </ion-item>
 
-      <ion-item
-        *ngIf="
+      <ion-item *ngIf="
           !commentForm.controls.firstName.valid &&
           (commentForm.controls.firstName.dirty || submitAttempt)
-        "
-      >
+        ">
         <p>Please enter a valid name.</p>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Last Name</ion-label>
-        <ion-input
-          formControlName="lastName"
-          type="text"
-          [class.invalid]="
+        <ion-input formControlName="lastName" type="text" [class.invalid]="
             !commentForm.controls.lastName.valid &&
             (commentForm.controls.age.dirty || submitAttempt)
-          "
-        ></ion-input>
+          "></ion-input>
       </ion-item>
 
-      <ion-item
-        *ngIf="
+      <ion-item *ngIf="
           !commentForm.controls.lastName.valid &&
           (commentForm.controls.lastName.dirty || submitAttempt)
-        "
-      >
+        ">
         <p>Please enter a valid name.</p>
       </ion-item>
 
       <ion-item>
         <ion-label position="floating">Age</ion-label>
-        <ion-input
-          formControlName="age"
-          type="number"
-          [class.invalid]="
+        <ion-input formControlName="age" type="number" [class.invalid]="
             !commentForm.controls.age.valid &&
             (commentForm.controls.age.dirty || submitAttempt)
-          "
-        ></ion-input>
+          "></ion-input>
       </ion-item>
 
-      <ion-item
-        *ngIf="
+      <ion-item *ngIf="
           !commentForm.controls.age.valid &&
           (commentForm.controls.age.dirty || submitAttempt)
-        "
-      >
+        ">
         <p>Please enter a valid age.</p>
       </ion-item>
     </form>

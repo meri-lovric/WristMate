@@ -1,15 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Slide } from './slide.model';
 import { SlidesService } from './slides.service';
 import { SettingsComponent } from '../settings/settings.component';
 import { ModalController, ToastController } from '@ionic/angular';
 import { BLE } from '@ionic-native/ble/ngx';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-slides',
   templateUrl: './slides.page.html',
   styleUrls: ['./slides.page.scss'],
 })
-export class SlidesPage implements OnInit {
+export class SlidesPage implements OnInit, OnDestroy {
+  message: string;
+  subscription: Subscription;
   slideOpts = {
     /* initialSlide: 0,
     speed: 400, */
@@ -30,11 +34,12 @@ export class SlidesPage implements OnInit {
     private slidesService: SlidesService,
     public modalController: ModalController,
     public toastController: ToastController,
-    private ble: BLE
-  ) {}
+    private ble: BLE,
+  ) { }
 
   ngOnInit() {
     this.slides = this.slidesService.getAllSlides();
+    this.subscription = this.slidesService.currentMessage.subscribe(message => this.message = message)
     this.ble.isEnabled().then(
       () => {
         console.log('Bluetooth enabled');
@@ -68,6 +73,9 @@ export class SlidesPage implements OnInit {
         this.presentLocationToast(this.isLocationEnabled);
       }
     );
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
   async presentModal() {
     const modal = await this.modalController.create({
