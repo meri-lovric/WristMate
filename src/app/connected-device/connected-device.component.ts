@@ -8,6 +8,7 @@ import { BLE } from '@ionic-native/ble/ngx';
   styleUrls: ['./connected-device.component.scss'],
 })
 export class ConnectedDeviceComponent implements OnInit {
+  devices: Array<Object>;
   constructor(
     public modalController: ModalController,
     private ble: BLE,

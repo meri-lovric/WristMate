@@ -1,3 +1,21 @@
 <div>
   <ion-button (click)="dismiss()">Close</ion-button>
- </div>
+  <div>
+    <h1>Connected device</h1>
+    <div *ngFor="let message of messages">
+      <ul>
+        <!-- <h2>{{i}}</h2>
+         -->
+        <li>
+          {{message.name}}
+        </li>
+        <li>
+          {{message.id}}
+        </li>
+        <li>
+          {{message.rssi}}
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

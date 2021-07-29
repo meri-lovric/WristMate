@@ -1,42 +1,28 @@
 <ion-header background="#ffff">
   <ion-toolbar>
-    <ion-title>WristMate</ion-title>
+    <ion-title>WristMate
+    </ion-title>
+    <ion-badge color="primary" (click)="presentModalDevices()">{{messages.length}}</ion-badge>
   </ion-toolbar>
-  <ion-button (click)="presentModal()">Settings</ion-button>
+  <ion-button (click)="presentModalSettings()">Settings</ion-button>
 </ion-header>
 
 <ion-content id="main-page">
   <ion-grid>
-    <ion-row
-      ><ion-col class="slide" size-md="4" offset-md="6">
+    <ion-row>
+      <ion-col class="slide" size-md="4" offset-md="6">
         <ion-slides pager="true" [options]="slideOpts">
-          <ion-slide
-            class=""
-            *ngFor="let slide of slides"
-            [ngSwitch]="true"
-            [routerLink]="['./', slide.title.toLowerCase()]"
-          >
+          <ion-slide class="" *ngFor="let slide of slides" [ngSwitch]="true"
+            [routerLink]="['./', slide.title.toLowerCase()]">
             <ion-avatar>
-              <ion-icon
-                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'connect'"
-                name="bluetooth-outline"
-              ></ion-icon>
-              <ion-icon
-                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'read'"
-                name="watch-outline"
-              ></ion-icon>
-              <ion-icon
-                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'comment'"
-                name="chatbubble-outline"
-              ></ion-icon>
-              <ion-icon
-                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'history'"
-                name="pulse-outline"
-              ></ion-icon>
-              <ion-icon
-                *ngSwitchCase="slide.title.toLocaleLowerCase() === 'multiple-devices'"
-                name="add-circle-outline"
-              ></ion-icon>
+              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'connect'" name="bluetooth-outline">
+              </ion-icon>
+              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'read'" name="watch-outline"></ion-icon>
+              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'comment'" name="chatbubble-outline">
+              </ion-icon>
+              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'history'" name="pulse-outline"></ion-icon>
+              <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'multiple-devices'"
+                name="add-circle-outline"></ion-icon>
             </ion-avatar>
             <ion-footer>
               <ion-label>{{slide.title}}</ion-label>
@@ -44,7 +30,7 @@
             </ion-footer>
           </ion-slide>
         </ion-slides>
-      </ion-col></ion-row
-    >
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>
