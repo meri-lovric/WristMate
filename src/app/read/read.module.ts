@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { ReadPageRoutingModule } from './read-routing.module';
 
 import { ReadPage } from './read.page';
+import { GridToggleComponentModule } from '../grid-toggle/grid-toggle.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ReadPageRoutingModule
+    ReadPageRoutingModule,
+    GridToggleComponentModule
   ],
   declarations: [ReadPage]
 })
-export class ReadPageModule {}
+export class ReadPageModule { }
