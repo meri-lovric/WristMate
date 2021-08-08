@@ -4,18 +4,17 @@
     <ion-button [routerLink]="['../']">Back</ion-button>
   </ion-toolbar>
 </ion-header>
-<GridToggleComponent>
-  
-</GridToggleComponent>
+
 <ion-content>
-  <p *ngIf="isConnected"></p>
+  <p *ngIf="isConnected">Devices connected</p>
+
   <ion-button
-    (click)="read(); single_read(); new_function(); new_function2();new_function3();new_function4()"
+    (click)="read(); singleRead(); newFunction(); newFunction2();newFunction3();newFunction4()"
     >Read</ion-button
   >
-  <ion-button (click)="connectedDevices()">Connected Devices</ion-button>
+  <ion-button>Connected Devices</ion-button>
   <ion-list-header>Meausured values</ion-list-header>
-  
+
   <!-- <ion-card *ngIf="currentValue < 35">
     <ion-card-content class="blue">{currentValue</ion-card-content>
   </ion-card>
@@ -48,20 +47,42 @@
 
   <!-- <ion-list>
    -->
-  <ion-card *ngFor="let value of values">
-    <ion-card-content *ngIf="value < 35.5">
-      <p class="blue">{{value}}</p>
-    </ion-card-content>
-    <ion-card-content *ngIf="value >= 35.5 && value < 37.5">
-      <p class="green">{{value}}</p>
-    </ion-card-content>
-    <ion-card-content *ngIf="value >= 37.5 && value < 38.3">
-      <p class="orange">{{value}}</p>
-    </ion-card-content>
-    <ion-card-content *ngIf="value >= 38.3">
-      <p class="red">{{value}}</p>
-    </ion-card-content>
-  </ion-card>
-  <!--  </ion-list>
- --></ion-content
+  <ng-container *ngIf="connectedDevices.length === 0;else oneConnectedDevice"
+    >No connected devices
+    <ion-spinner name="dots"></ion-spinner>
+    Connect here
+    <ion-icon name="add-circle" [routerLink]="['../connect']"></ion-icon>
+  </ng-container>
+  <ng-template #oneConnectedDevice>
+    <ng-container
+      *ngIf="connectedDevices.length === 1;else multipleConnectedDevices"
+    >
+      <ion-card *ngFor="let value of values">
+        <ion-card-content *ngIf="value < 35.5">
+          <p class="blue">{{value}}</p>
+        </ion-card-content>
+        <ion-card-content *ngIf="value >= 35.5 && value < 37.5">
+          <p class="green">{{value}}</p>
+        </ion-card-content>
+        <ion-card-content *ngIf="value >= 37.5 && value < 38.3">
+          <p class="orange">{{value}}</p>
+        </ion-card-content>
+        <ion-card-content *ngIf="value >= 38.3">
+          <p class="red">{{value}}</p>
+        </ion-card-content>
+      </ion-card>
+    </ng-container>
+  </ng-template>
+  <ng-template #multipleConnectedDevices>
+    <ion-grid>
+      <ion-row>
+        <ion-col sizeLg="4" sizeMd="4" sizeXs="6" *ngFor="let value of values">
+          <ion-card>
+            <ion-card-header color="primary"> Device name </ion-card-header>
+            {{value}}
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-template></ion-content
 >

@@ -6,6 +6,7 @@ import { Temperature } from '../../templates/Temperature';
 import { TemperatureService } from './temperature.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SlidesService } from '../slides/slides.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-read',
@@ -18,7 +19,37 @@ export class ReadPage implements OnInit {
   readValue = '';
   currentValue: number;
   values: number[] = [];
-  connectedDevicesList: string;
+  connectedDevices: Array<any> = []; /* = [
+    {
+      name: '1',
+    },
+    {
+      name: '2',
+    },
+    {
+      name: '3',
+    },
+    {
+      name: '4',
+    },
+    {
+      name: '5',
+    },
+    {
+      name: '6',
+    },
+    {
+      name: '7',
+    },
+    {
+      name: '8',
+    },
+    {
+      name: '9',
+    },
+  ]; */
+  subscription: Subscription;
+
   /* tempReading: Temperature = {
     $key: null,
     value: '',
@@ -30,8 +61,7 @@ export class ReadPage implements OnInit {
     private ngZone: NgZone,
     private tempService: TemperatureService,
     public toastController: ToastController,
-    private slidesService: SlidesService,
-
+    private slidesService: SlidesService
   ) {
     setInterval(() => {
       this.now = new Date();
@@ -40,31 +70,13 @@ export class ReadPage implements OnInit {
 
   ngOnInit(): void {
     this.statusMessage = 'disconnected';
+    this.subscription = this.slidesService.currentMessage.subscribe(
+      (connectedDevices) => (this.connectedDevices = connectedDevices)
+    );
   }
   getNowUTC() {
     const now = new Date();
     return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-  }
-  connectedDevices() {
-    /* this.slidesService.changeMessage('new message');
-    console.log(this.slidesService.currentMessage);
-    this.slidesService.currentMessage.pipe()  //this will limit the observable to only one value
-      .subscribe((currentMessage: string) => {
-        this.connectedDevicesList = currentMessage; //assigning value 
-      });
-    console.log(this.connectedDevicesList);  *///accessing the value 
-  }
-
-
-  scan() {
-    this.ble.scan([], 4).subscribe((device) => {
-      console.log(device);
-      if (device && device.name) {
-        this.peripherals = [...this.peripherals, device.name];
-        this.statusMessage = this.peripherals.reduce((a, b) => a + ', ' + b);
-        console.log(this.statusMessage);
-      }
-    });
   }
   connect(device: string) {
     this.ble.connect(device).subscribe(
@@ -77,7 +89,7 @@ export class ReadPage implements OnInit {
       }
     );
   }
-  single_read() {
+  singleRead() {
     this.ble
       .read(
         'D6:63:90:E4:A9:B2',
@@ -92,54 +104,58 @@ export class ReadPage implements OnInit {
       .catch((err) => console.log(err));
   }
   read() {
-    this.ble
-      .startNotification(
-        'D6:63:90:E4:A9:B2',
-        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-        '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
-      )
-      .subscribe((buffer) => {
-        console.log(
-          'TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
-        this.readValue = String.fromCharCode
-          .apply(null, new Uint8Array(buffer[0]))
-          .slice(14);
-        const tempReading = {
-          key: new Date().getTime(),
-          value: this.readValue,
-          time: this.now.toUTCString(),
-        };
-        //this.currentValue = Number(this.readValue);
-        /*   this.tempReading.key = new Date().getTime();
-        this.tempReading.value = this.readValue;
-        this.tempReading.time = this.now.toUTCString();
-        console.log('KEY: ', this.tempReading.key); */
-        console.log('READ TEMP: ', tempReading);
-        this.tempService
-          .createTemperature('D6:63:90:E4:A9:B2', tempReading)
-          .then((result) => {
-            console.log(result);
-          })
-          .catch((error) => console.log(error));
-        //console.log('STR2: ' + this.readValue.slice(2, 7));
-        this.ngZone.run(() => {
-          this.values.push(Number(this.readValue.slice(28, 33)));
-          console.log(this.readValue.slice(28, 33));
+    for (const device of this.connectedDevices) {
+      this.ble
+        .startNotification(
+          device.name,
+          '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+          '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+        )
+        .subscribe((buffer) => {
+          console.log(
+            'TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          );
+          this.readValue = String.fromCharCode
+            .apply(null, new Uint8Array(buffer[0]))
+            .slice(14);
+          if (!isNaN(Number(this.readValue))) {
+            const tempReading = {
+              key: new Date().getTime(),
+              value: Number(this.readValue),
+              time: this.now.toUTCString(),
+            };
+            console.log(
+              'Device: ", device.name,"\nRead temperature: ',
+              tempReading
+            );
+            this.tempService
+              .createTemperature(device.name, tempReading)
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((error) => console.log(error));
+            //console.log('STR2: ' + this.readValue.slice(2, 7));
+            this.ngZone.run(() => {
+              this.values.push(Number(this.readValue.slice(28, 33)));
+              console.log(this.readValue.slice(28, 33));
+            });
+          }
         });
-      });
+    }
   }
   isConnected() {
-    this.ble.isConnected('D6:63:90:E4:A9:B2').then(
-      () => {
-        console.log('connected');
-        return true;
-      },
-      () => {
-        console.log('not connected');
-        return false;
-      }
-    );
+    for (const device of this.connectedDevices) {
+      this.ble.isConnected(device.name).then(
+        () => {
+          console.log(device.name, ' is connected');
+          return true;
+        },
+        () => {
+          console.log(device.name, ' is not connected');
+          return false;
+        }
+      );
+    }
   }
   async presentToast() {
     const toast = await this.toastController.create({
@@ -148,7 +164,7 @@ export class ReadPage implements OnInit {
     });
     toast.present();
   }
-  new_function() {
+  newFunction() {
     console.log('NEW FUNCTION');
     this.ble
       .startNotification(
@@ -159,11 +175,11 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION:' +
-          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
-  new_function2() {
+  newFunction2() {
     console.log('NEW FUNCTION2');
     this.ble
       .startNotification(
@@ -174,29 +190,29 @@ export class ReadPage implements OnInit {
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION2:' +
-          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
-  new_function3() {
+  newFunction3() {
     console.log('NEW FUNCTION3');
     this.ble
       .startNotification('D6:63:90:E4:A9:B2', 'fee7', 'fea1')
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION3:' +
-          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }
-  new_function4() {
+  newFunction4() {
     console.log('NEW FUNCTION4');
     this.ble
       .startNotification('D6:63:90:E4:A9:B2', 'fee7', 'fea2')
       .subscribe((buffer) => {
         console.log(
           'NEW FUNCTION4:' +
-          String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
         );
       });
   }

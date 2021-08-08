@@ -5,8 +5,9 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class SlidesService {
-  connectedDevicesArray: Array<Object> = []
+  connectedDevicesArray: Array<any> = [];
   private messageSource = new BehaviorSubject([]);
+  // eslint-disable-next-line @typescript-eslint/member-ordering
   currentMessage = this.messageSource.asObservable();
 
   private slides: Slide[] = [
@@ -40,8 +41,8 @@ export class SlidesService {
   getAllSlides() {
     return [...this.slides];
   }
-  changeMessage(message: Object){
-    this.connectedDevicesArray.push(message)
+  changeMessage(connectedDevice: any) {
+    this.connectedDevicesArray.push(connectedDevice);
     this.messageSource.next(this.connectedDevicesArray);
   }
 }

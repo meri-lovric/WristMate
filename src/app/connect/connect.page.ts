@@ -12,9 +12,9 @@ import { SlidesService } from '../slides/slides.service';
 export class ConnectPage implements OnInit, OnDestroy {
   peripherals: any[] = [];
   statusMessage: string;
-  connectedDevice: string;
-  message: Array<Object>;
   subscription: Subscription;
+  connectedDevice: string;
+  connectedDevices: Array<any>;
   characteristics: string;
   responses: any[] = [];
   readValue = '';
@@ -23,10 +23,12 @@ export class ConnectPage implements OnInit, OnDestroy {
     private ble: BLE,
     private ngZone: NgZone,
     public modalController: ModalController,
-    private slidesService: SlidesService,
-  ) { }
+    private slidesService: SlidesService
+  ) {}
   ngOnInit() {
-    this.subscription = this.slidesService.currentMessage.subscribe(message => this.message = message)
+    this.subscription = this.slidesService.currentMessage.subscribe(
+      (connectedDevices) => (this.connectedDevices = connectedDevices)
+    );
     this.statusMessage = 'disconnected';
   }
 

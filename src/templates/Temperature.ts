@@ -1,5 +1,5 @@
 export class Temperature {
   key: number;
-  value: string;
+  value: number;
   time: string;
 };
