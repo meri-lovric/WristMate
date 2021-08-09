@@ -13,8 +13,7 @@ export class ConnectPage implements OnInit, OnDestroy {
   peripherals: any[] = [];
   statusMessage: string;
   subscription: Subscription;
-  connectedDevice: string;
-  connectedDevices: Array<any>;
+  connectedDevices: Array<any> = [];
   characteristics: string;
   responses: any[] = [];
   readValue = '';
@@ -53,7 +52,6 @@ export class ConnectPage implements OnInit, OnDestroy {
     this.ble.connect(device).subscribe(
       (peripheralData) => {
         console.log(peripheralData);
-        this.connectedDevice = device;
         this.presentModal(peripheralData);
         this.slidesService.changeMessage(peripheralData);
       },
@@ -62,39 +60,17 @@ export class ConnectPage implements OnInit, OnDestroy {
       }
     );
   }
-  read() {
-    // buffer = new ArrayBuffer(16);
-    //const view1 = new DataView(buffer);
-    //TEMPERATURE
-    this.ble
-      .startNotification(
-        'D6:63:90:E4:A9:B2',
-        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-        '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
-      )
-      .subscribe((buffer) => {
-        this.responses.push(buffer[0]);
-        console.log(
-          'TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
-        this.readValue = String.fromCharCode
-          .apply(null, new Uint8Array(buffer[0]))
-          .slice(14);
-        console.log('STR2: ' + this.readValue.slice(0, 5));
-        this.values.push(this.readValue.slice(0, 5));
-      });
-  }
-  disconnect() {
-    this.ble.disconnect('D6:63:90:E4:A9:B2').then(() => {
-      console.log('Disconnected');
+  disconnect(device: string) {
+    this.ble.disconnect(device).then(() => {
+      console.log('Disconnected ', device);
     });
   }
   async presentModal(connectedDevice: any) {
-    console.log(this.connectedDevice);
+    console.log(connectedDevice);
     const modal = await this.modalController.create({
       component: ConnectedDeviceComponent,
       componentProps: {
-        device: connectedDevice,
+        devices: this.connectedDevices,
       },
       cssClass: 'my-custom-class',
     });
@@ -109,5 +85,6 @@ export class ConnectPage implements OnInit, OnDestroy {
         console.log(err);
       }
     );
+    console.log('Connected devices: ', this.connectedDevices);
   }
 }

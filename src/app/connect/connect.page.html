@@ -9,9 +9,6 @@
   <ion-button (click)="scan()"
     >Scan <ion-icon name="bluetooth"></ion-icon
   ></ion-button>
-  <ion-button (click)="disconnect()"
-    >Disconnect <ion-icon name="stop"></ion-icon
-  ></ion-button>
 
   <ion-list-header>Discovered devices</ion-list-header>
   <ion-list>
@@ -20,10 +17,12 @@
       <p (click)="connect(peripheral.id)">{{peripheral.name || "Unnamed"}}</p>
       <p>
         {{peripheral.id}}
+        <span *ngIf="connectedDevices.includes(peripheral.id)"></span>
+        <ion-icon name="checkmark-outline" class="good-signal"></ion-icon>
         <ion-icon
-          *ngIf="peripheral.id === connectedDevice"
-          name="checkmark-outline"
-          class="good-signal"
+          name="close"
+          class="poor-signal"
+          (click)="disconnect(peripheral.id)"
         ></ion-icon>
       </p>
       <p>

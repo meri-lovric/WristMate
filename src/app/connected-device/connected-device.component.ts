@@ -8,7 +8,7 @@ import { BLE } from '@ionic-native/ble/ngx';
   styleUrls: ['./connected-device.component.scss'],
 })
 export class ConnectedDeviceComponent implements OnInit {
-  devices: Array<Object>;
+  devices: Array<any>;
   constructor(
     public modalController: ModalController,
     private ble: BLE,
@@ -20,6 +20,11 @@ export class ConnectedDeviceComponent implements OnInit {
     // can "dismiss" itself and optionally pass back data
     this.modalController.dismiss({
       dismissed: true,
+    });
+  }
+  disconnect(device: string) {
+    this.ble.disconnect(device).then(() => {
+      console.log('Disconnected ', device);
     });
   }
 }

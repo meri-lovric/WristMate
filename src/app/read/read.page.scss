@@ -1,15 +1,76 @@
-.red{
-  color:red;
+.red {
+  color: red;
 }
-.blue{
-  color:blue;
+.blue {
+  color: blue;
 }
-.orange{
-  color:orange;
+.orange {
+  color: orange;
 }
-.yellow{
-  color:yellow;
+.yellow {
+  color: yellow;
 }
-.green{
-  color:green;
+.green {
+  color: green;
+}
+ion-card {
+  overflow: auto;
+  height: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#no-connection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: -webkit-fill-available;
+  margin-top: 25%;
+}
+ion-button {
+  --background: gold;
+}
+ion-button:hover {
+  transform: scale(1.2);
+}
+ion-header ion-button {
+  margin-right: 2vw;
+}
+.header-md::after {
+  background-image: none;
+  border-bottom: 0.5vh solid lightcoral;
+}
+ion-header ion-title {
+  color: lightskyblue;
+  /* background: -webkit-linear-gradient(lightcoral, lightskyblue);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+   */
+  font-family: monospace;
+  font-stretch: semi-expanded;
+  letter-spacing: 3vw;
+  font-weight: 400;
+  font-size: x-large;
+}
+.credit {
+  color: lightgrey;
+  font: status-bar;
+}
+div ion-title {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: gold;
+}
+ion-spinner {
+  color: goldenrod;
+  height: 10vh;
+  margin-top: -10vh;
+}
+ion-header {
+  display: flex;
+  margin-top: 2vh;
+  padding-bottom: 1vh;
 }

@@ -13,7 +13,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./slides.page.scss'],
 })
 export class SlidesPage implements OnInit, OnDestroy {
-  messages: Array<Object>;
+  connectedDevices: Array<any>;
   subscription: Subscription;
   slideOpts = {
     /* initialSlide: 0,
@@ -40,7 +40,7 @@ export class SlidesPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.slides = this.slidesService.getAllSlides();
-    this.subscription = this.slidesService.currentMessage.subscribe(message => this.messages = message)
+    this.subscription = this.slidesService.currentMessage.subscribe(connectedDevices => this.connectedDevices = connectedDevices);
     this.ble.isEnabled().then(
       () => {
         console.log('Bluetooth enabled');
@@ -89,7 +89,7 @@ export class SlidesPage implements OnInit, OnDestroy {
     const modal = await this.modalController.create({
       component: ConnectedDeviceComponent,
       componentProps: {
-        devices: this.messages
+        devices: this.connectedDevices
       },
       cssClass: 'my-custom-class',
     });

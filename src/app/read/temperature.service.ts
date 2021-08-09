@@ -32,7 +32,7 @@ export class TemperatureService {
     this.temperatureRef = this.db.object('/temperature/' + id);
     return this.temperatureRef;
   }
-  updateTemperature(id, temp: Temperature) {
+  updateTemperature(id: string, temp: Temperature) {
     return this.temperatureRef.update({
       value: temp.value,
       time: temp.time,

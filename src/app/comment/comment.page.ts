@@ -17,7 +17,7 @@ export class CommentPage{
   @ViewChild(GoogleMapsComponent) mapComponent: GoogleMapsComponent;
 
 	public commentForm: FormGroup;
-  public submitAttempt: boolean = false;
+  public submitAttempt = false;
   constructor(public formBuilder: FormBuilder){
     this.commentForm = formBuilder.group({
       firstName: ['', Validators.compose([Validators.maxLength(30), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
@@ -28,16 +28,15 @@ export class CommentPage{
   save(){
     this.submitAttempt = true;
     if(!this.commentForm.valid){
-      console.log("Invalid submit form");
-      alert("Invalid submit form");
+      console.log('Invalid submit form');
+      alert('Invalid submit form');
     }else{
-      console.log("Success");
-      console.log("Send to database");
+      console.log('Success');
+      console.log('Send to database');
     }
   }
   testMarker(){
-
-    let center = this.mapComponent.map.getCenter();
+    const center = this.mapComponent.map.getCenter();
     this.mapComponent.addMarker(center.lat(), center.lng());
 
 }

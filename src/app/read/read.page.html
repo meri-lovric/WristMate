@@ -1,63 +1,35 @@
 <ion-header>
-  <ion-toolbar>
     <ion-title>Read</ion-title>
-    <ion-button [routerLink]="['../']">Back</ion-button>
-  </ion-toolbar>
+    <ion-button [routerLink]="['../']"><ion-icon name="arrow-undo"></ion-icon></ion-button>
 </ion-header>
 
 <ion-content>
-  <p *ngIf="isConnected">Devices connected</p>
-
-  <ion-button
-    (click)="read(); singleRead(); newFunction(); newFunction2();newFunction3();newFunction4()"
-    >Read</ion-button
-  >
-  <ion-button>Connected Devices</ion-button>
-  <ion-list-header>Meausured values</ion-list-header>
-
-  <!-- <ion-card *ngIf="currentValue < 35">
-    <ion-card-content class="blue">{currentValue</ion-card-content>
-  </ion-card>
-  <ion-card *ngIf="currentValue > 36.5 && currentValue < 37.5">
-    <ion-card-content class="green">{currentValue</ion-card-content>
-  </ion-card>
-  <ion-card *ngIf="currentValue >= 37.5 && currentValue < 38.3">
-    <ion-card-content class="blue">{currentValue</ion-card-content>
-  </ion-card>
-  <ion-card *ngIf="currentValue < 35">
-    <ion-card-content class="blue">{currentValue</ion-card-content>
-  </ion-card>
-
-  <ion-card
-    *ngIf="currentValue < 35 ? hypothermia: currentValue > 36.5 && currentValue < 37.5 ? normal : currentValue > 35.7 && currentValue < 38.3 ? fever : hyperthermia"
-  >
-    <ng-template #hypothermia>
-      <ion-card-content class="blue">{{currentValue}}</ion-card-content>
-    </ng-template>
-    <ng-template #normal>
-      <ion-card-content class="green">{{currentValue}}</ion-card-content>
-    </ng-template>
-    <ng-template #fever>
-      <ion-card-content class="orange">{{currentValue}}</ion-card-content>
-    </ng-template>
-    <ng-template #hyperthermia>
-      <ion-card-content class="red">{{currentValue}}</ion-card-content>
-    </ng-template>
-  </ion-card> -->
-
-  <!-- <ion-list>
-   -->
-  <ng-container *ngIf="connectedDevices.length === 0;else oneConnectedDevice"
-    >No connected devices
-    <ion-spinner name="dots"></ion-spinner>
-    Connect here
-    <ion-icon name="add-circle" [routerLink]="['../connect']"></ion-icon>
+  <ng-container *ngIf="connectedDevices.length === 0;else oneConnectedDevice">
+    <div id="no-connection">
+      <ion-title>No connected devices</ion-title>
+      <ion-spinner name="dots"></ion-spinner>
+      <ion-button [routerLink]="['../connect']">Connect here</ion-button>
+      <ion-img
+        src="https://ouch-cdn2.icons8.com/1ZZrDFEr7Z5IT-89YDCw610CPo2TqbQSKsej5p-bTjY/rs:fit:1216:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjgx/LzZmNDVjOWQyLWQx/ZDQtNGRlYS1iNjM5/LTBkNDMwN2E0OTRk/MS5zdmc.png"
+      ></ion-img>
+      <span class="credit"
+        >Illustration by
+        <a
+          href="https://icons8.com/illustrations/author/5eb2a7bd01d0360019f124e7"
+          >Olha Khomich</a
+        >
+        from <a href="https://icons8.com/illustrations">Ouch!</a></span
+      >
+    </div>
   </ng-container>
   <ng-template #oneConnectedDevice>
+    <ion-button (click)="read()">Read</ion-button>
+    <ion-button (click)="singleRead()">Single Read</ion-button>
+    <ion-list-header>Meausured values</ion-list-header>
     <ng-container
       *ngIf="connectedDevices.length === 1;else multipleConnectedDevices"
     >
-      <ion-card *ngFor="let value of values">
+      <ion-card *ngFor="let value of connectedDevices[0].values">
         <ion-card-content *ngIf="value < 35.5">
           <p class="blue">{{value}}</p>
         </ion-card-content>
@@ -74,12 +46,42 @@
     </ng-container>
   </ng-template>
   <ng-template #multipleConnectedDevices>
+    <ion-button (click)="read()">Read</ion-button>
+    <ion-button (click)="singleRead()">Single Read</ion-button>
+
+    <ion-list-header>Meausured values</ion-list-header>
+
     <ion-grid>
       <ion-row>
-        <ion-col sizeLg="4" sizeMd="4" sizeXs="6" *ngFor="let value of values">
+        <ion-col
+          sizeLg="4"
+          sizeMd="4"
+          sizeXs="6"
+          *ngFor="let connectedDevice of connectedDevices"
+        >
           <ion-card>
-            <ion-card-header color="primary"> Device name </ion-card-header>
-            {{value}}
+            <ion-card-header color="primary"
+              ><ion-card-title>{{connectedDevice.device.name}}</ion-card-title>
+              <ion-card-subtitle
+                >{{connectedDevice.device.id}}</ion-card-subtitle
+              >
+            </ion-card-header>
+            <ion-list>
+              <ion-item *ngFor="let value of connectedDevice.values">
+                <ion-label *ngIf="value < 35.5">
+                  <p class="blue">{{value}}</p></ion-label
+                >
+                <ion-label *ngIf="value >= 35.5 && value < 37.5">
+                  <p class="green">{{value}}</p></ion-label
+                >
+                <ion-label *ngIf="value >= 37.5 && value < 38.3">
+                  <p class="orange">{{value}}</p></ion-label
+                >
+                <ion-label *ngIf="value >= 38.3">
+                  <p class="red">{{value}}</p></ion-label
+                >
+              </ion-item>
+            </ion-list>
           </ion-card>
         </ion-col>
       </ion-row>

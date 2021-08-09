@@ -7,7 +7,6 @@ import { TemperatureService } from './temperature.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SlidesService } from '../slides/slides.service';
 import { Subscription } from 'rxjs';
-
 @Component({
   selector: 'app-read',
   templateUrl: './read.page.html',
@@ -19,42 +18,12 @@ export class ReadPage implements OnInit {
   readValue = '';
   currentValue: number;
   values: number[] = [];
-  connectedDevices: Array<any> = []; /* = [
-    {
-      name: '1',
-    },
-    {
-      name: '2',
-    },
-    {
-      name: '3',
-    },
-    {
-      name: '4',
-    },
-    {
-      name: '5',
-    },
-    {
-      name: '6',
-    },
-    {
-      name: '7',
-    },
-    {
-      name: '8',
-    },
-    {
-      name: '9',
-    },
-  ]; */
+  connected = false;
+  connectedDevices: Array<{
+    device: any;
+    values: Array<number>;
+  }> = [];
   subscription: Subscription;
-
-  /* tempReading: Temperature = {
-    $key: null,
-    value: '',
-    time: null,
-  }; */
   now: Date;
   constructor(
     private ble: BLE,
@@ -71,8 +40,14 @@ export class ReadPage implements OnInit {
   ngOnInit(): void {
     this.statusMessage = 'disconnected';
     this.subscription = this.slidesService.currentMessage.subscribe(
-      (connectedDevices) => (this.connectedDevices = connectedDevices)
+      (connectedDevices) => {
+        // eslint-disable-next-line prefer-const
+        for (let device of connectedDevices) {
+          this.connectedDevices.push({ device, values: [] });
+        }
+      }
     );
+    this.connected = this.isConnected();
   }
   getNowUTC() {
     const now = new Date();
@@ -90,24 +65,54 @@ export class ReadPage implements OnInit {
     );
   }
   singleRead() {
-    this.ble
-      .read(
-        'D6:63:90:E4:A9:B2',
-        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
-        '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
-      )
-      .then((result) => console.log('Read result - ', result))
-      .catch((err) => console.log(err));
-    this.ble
-      .read('D6:63:90:E4:A9:B2', 'fee7', 'fec9')
-      .then((result) => console.log('Read result2 - ', result))
-      .catch((err) => console.log(err));
+    for (const connectedDevice of this.connectedDevices) {
+      this.ble
+        .read(
+          connectedDevice.device.id,
+          '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+          '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+        )
+        .then((result) => console.log('Read result - ', result))
+        .catch((err) => console.log(err));
+      this.ble
+        .read(connectedDevice.device.id, 'fee7', 'fec9')
+        .then((result) => console.log('Read result2 - ', result))
+        .catch((err) => console.log(err));
+      this.ble
+        .read(
+          connectedDevice.device.id,
+          '0000fee7-0000-1000-8000-00805f9b34fb',
+          '0000fea1-0000-1000-8000-00805f9b34fb'
+        )
+        .then((result) => {
+          console.log('Read result3 - ', result);
+          const convertData = String.fromCharCode.apply(null, result);
+          const hexResult = [];
+          for (let i = 0; i < convertData.length; i++) {
+            const resultNumber = convertData.charCodeAt(i); //Dec
+            const str = (+resultNumber).toString(16);
+            let resultString = '';
+            if (str.length <= 1) {
+              resultString = ('0' + (+resultNumber).toString(16))
+                .toUpperCase()
+                .substring(-2); //String
+            } else {
+              resultString = ('' + (+resultNumber).toString(16))
+                .toUpperCase()
+                .substring(-2); //String
+            }
+            hexResult[i] = '0x' + resultString;
+          }
+          console.log('hex data:::' + hexResult);
+        })
+        .catch((err) => console.log(err));
+    }
   }
   read() {
-    for (const device of this.connectedDevices) {
+    for (const connectedDevice of this.connectedDevices) {
       this.ble
         .startNotification(
-          device.name,
+          connectedDevice.device.id,
           '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
           '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
         )
@@ -117,45 +122,52 @@ export class ReadPage implements OnInit {
           );
           this.readValue = String.fromCharCode
             .apply(null, new Uint8Array(buffer[0]))
-            .slice(14);
-          if (!isNaN(Number(this.readValue))) {
+            .substr(24, 5);
+          console.log(
+            'READ VALUE STRING:',
+            this.readValue,
+            '\n IS NUMBER:',
+            !isNaN(Number(this.readValue))
+          );
+          if (!isNaN(Number(this.readValue)) && this.readValue.length > 1) {
             const tempReading = {
               key: new Date().getTime(),
               value: Number(this.readValue),
               time: this.now.toUTCString(),
             };
             console.log(
-              'Device: ", device.name,"\nRead temperature: ',
+              'Device:',
+              connectedDevice.device.id,
+              '\nRead temperature: ',
               tempReading
             );
             this.tempService
-              .createTemperature(device.name, tempReading)
+              .createTemperature(connectedDevice.device.id, tempReading)
               .then((result) => {
                 console.log(result);
               })
               .catch((error) => console.log(error));
-            //console.log('STR2: ' + this.readValue.slice(2, 7));
             this.ngZone.run(() => {
-              this.values.push(Number(this.readValue.slice(28, 33)));
-              console.log(this.readValue.slice(28, 33));
+              connectedDevice.values.push(Number(this.readValue));
+              console.log(this.readValue);
             });
           }
         });
     }
   }
   isConnected() {
-    for (const device of this.connectedDevices) {
-      this.ble.isConnected(device.name).then(
+    this.connectedDevices.forEach((connectedDevice) => {
+      this.ble.isConnected(connectedDevice.device.id).then(
         () => {
-          console.log(device.name, ' is connected');
+          console.log(connectedDevice.device.id, ' is connected');
           return true;
         },
         () => {
-          console.log(device.name, ' is not connected');
-          return false;
+          console.log(connectedDevice.device.id, ' is not connected');
         }
       );
-    }
+    });
+    return false;
   }
   async presentToast() {
     const toast = await this.toastController.create({

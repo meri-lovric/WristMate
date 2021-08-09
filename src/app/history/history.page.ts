@@ -9,6 +9,8 @@ import { BLE } from '@ionic-native/ble/';
 import { NavController, NavParams } from '@ionic/angular';
 import { Chart, registerables } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
+import { TemperatureService } from '../read/temperature.service';
+
 Chart.register(...registerables, zoomPlugin);
 @Component({
   selector: 'app-history',
@@ -20,12 +22,15 @@ export class HistoryPage {
 
   bars: any;
   colorArray: any;
-  constructor() {}
+  data: any;
+  constructor(private tempService: TemperatureService) {}
 
   ionViewDidEnter() {
     this.createBarChart();
   }
-
+  onInit() {
+    this.data = this.tempService.getTemperature('F6:EB:EA:13:2A:E2');
+  }
   createBarChart() {
     this.bars = new Chart(this.barChart.nativeElement, {
       type: 'bar',

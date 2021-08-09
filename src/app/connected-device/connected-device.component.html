@@ -1,21 +1,20 @@
 <div>
   <ion-button (click)="dismiss()">Close</ion-button>
   <div>
-    <h1>Connected device</h1>
-    <div *ngFor="let message of messages">
-      <ul>
-        <!-- <h2>{{i}}</h2>
+    <h1>Connected devices</h1>
+    <ul *ngFor="let device of devices">
+      <!-- <h2>{{i}}</h2>
          -->
-        <li>
-          {{message.name}}
-        </li>
-        <li>
-          {{message.id}}
-        </li>
-        <li>
-          {{message.rssi}}
-        </li>
-      </ul>
-    </div>
+      <ion-icon name="close-circle" (click)="disconnect(device.id)"></ion-icon>
+      <li>
+        {{ device.name }}
+      </li>
+      <li>
+        {{ device.id }}
+      </li>
+      <li>
+        {{ device.rssi }}
+      </li>
+    </ul>
   </div>
 </div>
