@@ -29,7 +29,7 @@ export class TemperatureService {
     }); */
   }
   getTemperature(id: string) {
-    this.temperatureRef = this.db.object('/temperature/' + id);
+    this.temperatureRef = this.db.object('/'+id+'/temperature/'+ '-MgfO9QybDID-3DDL_xb');
     return this.temperatureRef;
   }
   updateTemperature(id: string, temp: Temperature) {

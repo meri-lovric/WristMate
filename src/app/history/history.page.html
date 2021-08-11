@@ -6,6 +6,28 @@
 </ion-header>
 
 <ion-content>
+  <ion-header>
+    <ion-chip
+      #OneHourChip
+      (click)="createGraph('1hour'); toggleChip(OneHourChip, [OneDayChip,OneWeekChip])"
+    >
+      <ion-label>1 hour</ion-label>
+    </ion-chip>
+
+    <ion-chip
+      #OneDayChip
+      (click)="createGraph('24hours'); toggleChip(OneDayChip, [OneHourChip,OneWeekChip])"
+    >
+      <ion-label>24 hours</ion-label>
+    </ion-chip>
+
+    <ion-chip
+      #OneWeekChip
+      (click)="createGraph('7days'); toggleChip(OneWeekChip, [OneHourChip, OneDayChip])"
+    >
+      <ion-label>7 days</ion-label>
+    </ion-chip>
+  </ion-header>
   <ion-list-header color="light">Vertical Bar Chart</ion-list-header>
   <ion-card class="welcome-card">
     <ion-card-header>
@@ -16,5 +38,5 @@
       <canvas #barChart></canvas>
     </ion-card-content>
   </ion-card>
-  <div>{{data}}</div>
+  <ion-button (click)="printData()">CLICK</ion-button>
 </ion-content>
