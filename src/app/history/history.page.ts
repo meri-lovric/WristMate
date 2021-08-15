@@ -7,12 +7,14 @@ import {
 } from '@angular/core';
 import { BLE } from '@ionic-native/ble/';
 import { IonChip, NavController, NavParams } from '@ionic/angular';
-import { Chart, registerables } from 'chart.js';
+import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { TemperatureService } from '../read/temperature.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';
+import { SlidesService } from '../slides/slides.service';
+import * as firebase from 'firebase';
 
 Chart.register(...registerables, zoomPlugin);
 @Component({
@@ -21,7 +23,7 @@ Chart.register(...registerables, zoomPlugin);
   styleUrls: ['./history.page.scss'],
 })
 export class HistoryPage {
-  @ViewChild('barChart') barChart;
+  @ViewChild('chart') chart;
 
   bars: any;
   colorArray: any;
@@ -29,49 +31,92 @@ export class HistoryPage {
   data: Observable<any[]>;
   graphValues = [];
   labels = [];
-  constructor(firestore: AngularFireDatabase) {
-    try {
-      this.data = firestore
-        .list('F6:EB:EA:13:2A:E2/temperature')
-        .valueChanges();
-    } catch {
-      this.data.forEach((e) =>
-        this.values.push(e)
-      ); /* this.values.push(e.value) */
+  selectedDevice: any;
+  subscription: Subscription;
+  connectedDevices: Array<{
+    device: any;
+    values: Array<number>;
+  }> = [
+    {
+      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
+      values: [36.8, 35.2, 38.0, 36, 35, 37.6, 39],
+    },
+    {
+      device: { id: 'D6:63:90:E4:A9:B2', name: 'Device2', rssi: '90' },
+      values: [39.8, 32.2, 33.0, 34, 38, 39.6, 37],
+    },
+  ];
+  constructor(db: AngularFireDatabase, private slidesService: SlidesService) {
+    if (this.connectedDevices.length === 1) {
+      try {
+        this.data = db
+          .list(this.connectedDevices[0].device.id + '/temperature')
+          .valueChanges();
+      } catch (error) {
+        console.log(error);
+        /* this.values.push(e.value)
       this.graphValues = this.values[0].map((e) => e.value);
-      console.log(this.graphValues);
+      console.log(this.graphValues); */
+      } finally {
+        this.data.forEach((e) => this.values.push(e));
+      }
     }
-  }
-  toggleOneChip(chip: IonChip) {
-    chip.color = 'danger';
   }
   toggleChip(chip: IonChip, otherChips: Array<IonChip>) {
     chip.color = 'success';
     otherChips.forEach((e) => (e.color = 'danger'));
   }
+  onEntityChange(value: any) {
+    this.selectedDevice = this.connectedDevices.find(
+      (el) => el.device.name === value.detail.value
+    );
+    console.log(this.selectedDevice);
+    console.log(value.detail.value);
+  }
+  getHourlyData(iter: number, step: number) {
+    firebase.default
+      .database()
+      .ref()
+      .child(this.selectedDevice.device.id + '/temperature')
+      .orderByChild('key')
+      .startAt(new Date().getTime() - iter * 3600 * 1000)
+      .on('value', (snap) => {
+        console.log(snap.val());
+        if (snap.val() === null) {
+          this.getHourlyData(++iter, step);
+        } else {
+          console.log(snap.val());
+          this.graphValues = Object.entries(snap.val());
+          this.graphValues = this.graphValues.map((el) => el[1].value);
+          this.graphValues.forEach((el, i) => this.labels.push(i + 1));
+          console.log('IN FUNCTION:', this.graphValues);
+          console.log(step);
+          if (step === 1) {
+            this.createChart('line');
+          }
+        }
+      });
+  }
   createGraph(interval: string) {
+    if (this.bars) {
+      this.bars.destroy();
+    }
     switch (interval) {
       case '1hour': {
-        this.graphValues = this.graphValues.slice(0).slice(-6);
-        console.log('1hour');
+        this.getHourlyData(1, 1);
         break;
       }
       case '24hours': {
+        this.getHourlyData(1, 24);
         let numberOfIntervals = 144;
         if (this.graphValues.length < 144) {
-          numberOfIntervals = this.graphValues.length / 10;
+          numberOfIntervals = Math.round(this.graphValues.length / 10);
+          this.calculateAverage(numberOfIntervals);
         }
+        this.calculateAverage(numberOfIntervals);
         console.log('Number of intervals', numberOfIntervals);
-        const tempData = this.graphValues.slice(0).slice(-numberOfIntervals);
-        console.log('Temp: ', tempData);
-        const [...arr] = tempData;
-        const res = [];
-        while (arr.length) {
-          res.push(arr.splice(0, 24));
-        }
-        console.log('24hours: ', res );
-/*         calculateAverage(res);
- */        break;
+        this.createChart('bar');
+        break;
       }
       case '7days': {
         console.log('7days');
@@ -80,73 +125,117 @@ export class HistoryPage {
       }
       default: {
         console.log('Invalid interval');
+        this.bars.destroy();
       }
     }
   }
-/*   calculateAverage(result: Array<Array<any>>){
-    let temp;
-    let sum = 0;
-    result.forEach()
+  calculateAverage(intervals: number) {
+    const res = [];
+    for (let i = 0; i < this.graphValues.length; i += intervals) {
+      const chunk = this.graphValues.slice(i, i + intervals);
+      res.push(chunk);
+    }
+    console.log(res);
+    this.graphValues = [];
+    res.forEach((el) => {
+      const average = el.reduce((a, b) => a + b) / el.length;
+      console.log(average);
+      this.graphValues.push(average);
+    });
   }
- */  ionViewDidEnter() {
-    /*     this.createBarChart();
-     */
+  ionViewDidEnter() {
   }
   onInit() {
-    /*     this.data = this.tempService.getTemperature('F6:EB:EA:13:2A:E2');
-    console.log('DATA', this.data);
- */
-  }
-  printData() {
-    this.data.forEach((e) =>
-      this.values.push(e)
-    ); /* this.values.push(e.value) */
-    console.log(this.values[0]);
-    this.graphValues = this.values[0].map((e) => e.value);
-    this.labels = this.values[0].map((e) => e.time);
-    this.graphValues = this.graphValues.slice(0).slice(-10);
-    //this.labels = this.labels.slice(0).slice(-10);
-    this.labels = ['10', '11', '12', '13', '14', '15', '16'];
-    console.log(this.graphValues);
-    this.createBarChart();
-  }
-  createBarChart() {
-    this.bars = new Chart(this.barChart.nativeElement, {
-      type: 'line',
-      data: {
-        labels: this.labels,
-        datasets: [
-          {
-            label: 'Viewers in millions',
-            data: this.graphValues,
-            backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-            borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-            borderWidth: 1,
+/*     this.createChart('line');
+ */  }
+  createChart(chartType: string) {
+    if (this.bars) {
+      this.bars.destroy();
+    }
+    switch (chartType) {
+      case 'line':
+        this.bars = new Chart(this.chart.nativeElement, {
+          type: 'line',
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                data: this.graphValues,
+                backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+                borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+                borderWidth: 1,
+                label: 'Last hour data',
+                fill: true,
+              },
+            ],
           },
-        ],
-      },
-      options: {
-        scales: {
-          x: {
-            ticks: {
-              maxTicksLimit: 10,
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                ticks: {
+                  callback(val, index) {
+                    // Hide the label of every 2nd dataset
+                    return index % 3 === 0 ? this.getLabelForValue(val) : '';
+                  },
+                  color: 'red',
+                },
+              },
+            },
+            plugins: {
+              zoom: {
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: 'xy',
+                },
+              },
             },
           },
-        },
-        plugins: {
-          zoom: {
-            zoom: {
-              wheel: {
-                enabled: true,
+        });
+        break;
+      case 'bar':
+        this.bars = new Chart(this.chart.nativeElement, {
+          type: 'bar',
+          data: {
+            labels: this.labels,
+            datasets: [
+              {
+                label: 'Viewers in millions',
+                data: this.graphValues,
+                backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+                borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+                borderWidth: 1,
               },
-              pinch: {
-                enabled: true,
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                ticks: {
+                  maxTicksLimit: 10,
+                },
               },
-              mode: 'xy',
+            },
+            plugins: {
+              zoom: {
+                zoom: {
+                  wheel: {
+                    enabled: true,
+                  },
+                  pinch: {
+                    enabled: true,
+                  },
+                  mode: 'xy',
+                },
+              },
             },
           },
-        },
-      },
-    });
+        });
+    }
   }
 }

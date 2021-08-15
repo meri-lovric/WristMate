@@ -7,36 +7,49 @@
 
 <ion-content>
   <ion-header>
-    <ion-chip
-      #OneHourChip
-      (click)="createGraph('1hour'); toggleChip(OneHourChip, [OneDayChip,OneWeekChip])"
-    >
-      <ion-label>1 hour</ion-label>
-    </ion-chip>
+    <ion-label>Connected devices</ion-label>
+    <div *ngIf="connectedDevices.length > 1">
+      <ion-select
+        (ionChange)="onEntityChange($event)"
+        cancelText="Cancel"
+        okText="Select"
+      >
+        <ion-select-option
+          *ngFor="let connectedDevice of connectedDevices; let i = index"
+          [value]="connectedDevice.device.name"
+          >{{connectedDevice.device.name}}</ion-select-option
+        >
+      </ion-select>
+    </div>
+    <div *ngIf="selectedDevice">
+      <ion-chip
+        #OneHourChip
+        (click)="createGraph('1hour'); toggleChip(OneHourChip, [OneDayChip,OneWeekChip])"
+      >
+        <ion-label>1 hour</ion-label>
+      </ion-chip>
 
-    <ion-chip
-      #OneDayChip
-      (click)="createGraph('24hours'); toggleChip(OneDayChip, [OneHourChip,OneWeekChip])"
-    >
-      <ion-label>24 hours</ion-label>
-    </ion-chip>
-
-    <ion-chip
-      #OneWeekChip
-      (click)="createGraph('7days'); toggleChip(OneWeekChip, [OneHourChip, OneDayChip])"
-    >
-      <ion-label>7 days</ion-label>
-    </ion-chip>
+      <ion-chip
+        #OneDayChip
+        (click)="createGraph('24hours'); toggleChip(OneDayChip, [OneHourChip,OneWeekChip])"
+      >
+        <ion-label>24 hours</ion-label>
+      </ion-chip>
+      <ion-chip
+        #OneWeekChip
+        (click)="createGraph('7days'); toggleChip(OneWeekChip, [OneHourChip, OneDayChip])"
+      >
+        <ion-label>7 days</ion-label>
+      </ion-chip>
+    </div>
   </ion-header>
-  <ion-list-header color="light">Vertical Bar Chart</ion-list-header>
   <ion-card class="welcome-card">
     <ion-card-header>
       <ion-card-subtitle>Number of Viewers per season for</ion-card-subtitle>
       <ion-card-title>Game of Thrones</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <canvas #barChart></canvas>
+      <canvas #chart></canvas>
     </ion-card-content>
   </ion-card>
-  <ion-button (click)="printData()">CLICK</ion-button>
 </ion-content>
