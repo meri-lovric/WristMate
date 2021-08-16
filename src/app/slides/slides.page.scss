@@ -1,6 +1,7 @@
 ion-slides {
   height: 100%;
   margin-top: 10vh;
+  --bullet-background-active: lightcoral;
 }
 .swiper-slide {
   height: 50vh;
@@ -8,7 +9,7 @@ ion-slides {
   display: grid;
   grid-template-rows: 65% 35%;
   grid-template-columns: 100%;
-  background-color: #4756c2;
+  background-color: lightskyblue;
   border-radius: 20%;
   margin: 10%;
   //border: solid 1px #4756c2 ;
@@ -33,8 +34,9 @@ ion-footer {
 }
 ion-label {
   margin-top: 5%;
-  margin-left: 5%;
-  color: black;
+  align-self: center;
+  font-variant: small-caps;
+  color: gold;
   text-align: start;
 }
 ion-avatar {
@@ -48,12 +50,120 @@ ion-card-subtitle {
 ion-icon {
   width: 100%;
   height: 90%;
+  color: ghostwhite;
 }
-
 ion-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 2%;
+}
+.red {
+  color: red;
+}
+.blue {
+  color: blue;
+}
+.orange {
+  color: orange;
+}
+.yellow {
+  color: yellow;
+}
+.green {
+  color: green;
+}
+ion-card {
+  overflow: auto;
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+}
+ion-card-title {
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+}
+ion-card-subtitle {
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+}
+#no-connection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: -webkit-fill-available;
+  margin-top: 25%;
+}
+ion-button {
+  --background: gold;
+}
+ion-button:hover {
+  transform: scale(1.2);
+}
+ion-header ion-button {
+  margin-right: 2vw;
+}
+ion-badge {
+  position: relative;
+  top: -2em;
+  left: 16em;
+  --background: lightcoral;
+}
+.read-button {
+  margin: 2.5vh 0 0.5vh 0;
+  align-self: center;
+  width: 25%;
+}
+ion-content {
+  display: flex;
+  justify-content: center;
+}
+.header-md::after {
+  background-image: none;
+  border-bottom: 0.5vh solid lightcoral;
+}
+ion-header ion-title {
+  color: lightskyblue;
+  /* background: -webkit-linear-gradient(lightcoral, lightskyblue);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+   */
+  font-family: monospace;
+  font-stretch: semi-expanded;
+  letter-spacing: 1.5vw;
+  font-weight: 400;
+  font-size: x-large;
+  position: relative;
+  top: 0.5em;
+}
+.credit {
+  color: lightgrey;
+  font: status-bar;
+}
+div ion-title {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: gold;
+}
+ion-spinner {
+  color: goldenrod;
+  height: 10vh;
+  margin-top: -10vh;
+}
+ion-header {
+  display: flex;
+  margin-top: 2vh;
+  padding-bottom: 1vh;
+}
+ion-card-header {
+  border-bottom: 0.5vw solid lightskyblue;
+  border-top: 1vw solid gold;
+  width: 100%;
 }

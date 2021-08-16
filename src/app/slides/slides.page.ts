@@ -22,7 +22,6 @@ export class SlidesPage implements OnInit, OnDestroy {
     speed: 400,
     spaceBetween: 0,
     slidesPreview: 2,
-    slidesOffsetBefore: 6,
     slidesPerView: 'auto',
     zoom: true,
     grabCursor: true,

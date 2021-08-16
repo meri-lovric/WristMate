@@ -2,9 +2,10 @@
   <ion-toolbar>
     <ion-title>WristMate
     </ion-title>
-    <ion-badge color="primary" (click)="presentModalDevices()">{{connectedDevices.length}}</ion-badge>
+    <ion-badge (click)="presentModalDevices()">{{connectedDevices.length}}</ion-badge>
   </ion-toolbar>
-  <ion-button (click)="presentModalSettings()">Settings</ion-button>
+
+  <ion-button (click)="presentModalSettings()"><ion-icon name="settings-filled"></ion-icon></ion-button>
 </ion-header>
 
 <ion-content id="main-page">
@@ -12,7 +13,7 @@
     <ion-row>
       <ion-col class="slide" size-md="4" offset-md="6">
         <ion-slides pager="true" [options]="slideOpts">
-          <ion-slide class="" *ngFor="let slide of slides" [ngSwitch]="true"
+          <ion-slide  *ngFor="let slide of slides" [ngSwitch]="true"
             [routerLink]="['./', slide.title.toLowerCase()]">
             <ion-avatar>
               <ion-icon *ngSwitchCase="slide.title.toLocaleLowerCase() === 'connect'" name="bluetooth-outline">
