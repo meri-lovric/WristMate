@@ -32,7 +32,9 @@ export class HistoryPage {
   graphValues = [];
   labels = [];
   selectedDevice: any;
+  interval: string;
   subscription: Subscription;
+  displayData: number;
   connectedDevices: Array<{
     device: any;
     values: Array<number>;
@@ -73,13 +75,38 @@ export class HistoryPage {
     console.log(this.selectedDevice);
     console.log(value.detail.value);
   }
+  isIntervalSelected(chips: Array<IonChip>) {
+    return chips.some((el) => el.color === 'success');
+  }
+  minimum() {
+    this.resetChartColors();
+    const minimum = Math.min(...this.graphValues);
+    this.bars.data.datasets[0].data.forEach((el, i) => {
+      if (el === minimum) {
+        this.bars.data.datasets[0].pointBorderColor[i] = '#cc00cc';
+      }
+    });
+    this.bars.update();
+    this.displayData = minimum;
+  }
+  maximum() {
+    this.resetChartColors();
+    const maximum = Math.max(...this.graphValues);
+    this.bars.data.datasets[0].data.forEach((el, i) => {
+      if (el === maximum) {
+        this.bars.data.datasets[0].pointBorderColor[i] = '#cc00cc';
+      }
+    });
+    this.bars.update();
+    this.displayData = maximum;
+  }
   getHourlyData(iter: number, step: number) {
     firebase.default
       .database()
       .ref()
       .child(this.selectedDevice.device.id + '/temperature')
       .orderByChild('key')
-      .startAt(new Date().getTime() - iter * 3600 * 1000)
+      .startAt(new Date().getTime() - step * iter * 3600 * 1000)
       .on('value', (snap) => {
         console.log(snap.val());
         if (snap.val() === null) {
@@ -87,13 +114,14 @@ export class HistoryPage {
         } else {
           console.log(snap.val());
           this.graphValues = Object.entries(snap.val());
+          this.graphValues.forEach((el, i) => {
+            this.labels.push(el[1].time.substring(17, 22));
+            console.log('EL: ', el[1].time.substring(17, 22));
+          });
           this.graphValues = this.graphValues.map((el) => el[1].value);
-          this.graphValues.forEach((el, i) => this.labels.push(i + 1));
           console.log('IN FUNCTION:', this.graphValues);
           console.log(step);
-          if (step === 1) {
-            this.createChart('line');
-          }
+          this.createChart('line');
         }
       });
   }
@@ -101,57 +129,78 @@ export class HistoryPage {
     if (this.bars) {
       this.bars.destroy();
     }
+    this.labels = [];
     switch (interval) {
       case '1hour': {
+        this.interval = '1 hour';
         this.getHourlyData(1, 1);
         break;
       }
       case '24hours': {
+        this.interval = '24 hours';
         this.getHourlyData(1, 24);
-        let numberOfIntervals = 144;
-        if (this.graphValues.length < 144) {
-          numberOfIntervals = Math.round(this.graphValues.length / 10);
-          this.calculateAverage(numberOfIntervals);
-        }
+        /*  let numberOfIntervals = 144;
+        console.log('LENGTH: ', this.graphValues.length);
+        //if (this.graphValues.length < numberOfIntervals) {
+        numberOfIntervals = Math.round(
+          this.graphValues.length / numberOfIntervals
+        );
+        //}
         this.calculateAverage(numberOfIntervals);
         console.log('Number of intervals', numberOfIntervals);
-        this.createChart('bar');
-        break;
+        */ /* this.createChart('line');
+         */ break;
       }
       case '7days': {
         console.log('7days');
-
-        break;
+        this.interval = '7 days';
+        this.getHourlyData(1, 168);
+        /*  let numberOfIntervals = 1008;
+        if (this.graphValues.length < numberOfIntervals) {
+          numberOfIntervals = Math.round(this.graphValues.length / 1008);
+          console.log('NUM', numberOfIntervals);
+        }
+        this.calculateAverage(numberOfIntervals);
+        */ /* this.createChart('line');
+         */ break;
       }
       default: {
         console.log('Invalid interval');
         this.bars.destroy();
+        break;
       }
     }
   }
-  calculateAverage(intervals: number) {
+  divideIntoSubarrays(intervals: number) {
     const res = [];
     for (let i = 0; i < this.graphValues.length; i += intervals) {
       const chunk = this.graphValues.slice(i, i + intervals);
       res.push(chunk);
     }
-    console.log(res);
-    this.graphValues = [];
-    res.forEach((el) => {
-      const average = el.reduce((a, b) => a + b) / el.length;
-      console.log(average);
-      this.graphValues.push(average);
-    });
+    console.log('res', res);
+    return res;
   }
-  ionViewDidEnter() {
+  average() {
+    const average =
+      this.graphValues.reduce((a, b) => a + b) / this.graphValues.length;
+    console.log(average);
+    this.displayData = average;
   }
+  ionViewDidEnter() {}
   onInit() {
-/*     this.createChart('line');
- */  }
+    /*     this.createChart('line');
+     */
+  }
+  resetChartColors() {
+    this.bars.data.datasets[0].pointBorderColor = this.graphValues.map(
+      (el) => 'rgb(38,104,129)'
+    );
+  }
   createChart(chartType: string) {
     if (this.bars) {
       this.bars.destroy();
     }
+    const backgroundColors = this.graphValues.map((value) => 'rgb(38,104,129)');
     switch (chartType) {
       case 'line':
         this.bars = new Chart(this.chart.nativeElement, {
@@ -161,25 +210,31 @@ export class HistoryPage {
             datasets: [
               {
                 data: this.graphValues,
-                backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-                borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-                borderWidth: 1,
-                label: 'Last hour data',
-                fill: true,
+                /*  backgroundColor: 'rgb(38,194,129)', // array should have same number of elements as number of dataset
+                 */ /* borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
+                 */ pointBorderColor: backgroundColors,
+                pointBorderWidth: 5,
+                label: 'Temperature data',
+                fill: false,
               },
             ],
           },
           options: {
+            elements: {
+              point: {
+                radius: 1,
+              },
+            },
             responsive: true,
             scales: {
               x: {
                 ticks: {
-                  callback(val, index) {
-                    // Hide the label of every 2nd dataset
-                    return index % 3 === 0 ? this.getLabelForValue(val) : '';
-                  },
                   color: 'red',
                 },
+              },
+              y: {
+                min: 30,
+                max: 40,
               },
             },
             plugins: {
@@ -191,7 +246,15 @@ export class HistoryPage {
                   pinch: {
                     enabled: true,
                   },
-                  mode: 'xy',
+                  mode: 'y',
+                },
+                pan: {
+                  enabled: true,
+                  mode: 'x',
+                  threshold: 10,
+                  /* onPanComplete(chart){
+                    console.log('Panned', chart);
+                    } */
                 },
               },
             },
@@ -205,7 +268,7 @@ export class HistoryPage {
             labels: this.labels,
             datasets: [
               {
-                label: 'Viewers in millions',
+                label: 'Temperature data',
                 data: this.graphValues,
                 backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
                 borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
@@ -216,9 +279,15 @@ export class HistoryPage {
           options: {
             scales: {
               x: {
+                max: 24,
                 ticks: {
-                  maxTicksLimit: 10,
+                  maxTicksLimit: 24,
                 },
+              },
+              y: {
+                //beginAtZero: true,
+                min: 30,
+                max: 40,
               },
             },
             plugins: {

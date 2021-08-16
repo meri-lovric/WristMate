@@ -41,15 +41,39 @@
       >
         <ion-label>7 days</ion-label>
       </ion-chip>
+
+      <div *ngIf="isIntervalSelected([OneDayChip, OneHourChip, OneWeekChip])">
+        <ion-chip
+          #Minimum
+          (click)="minimum(); toggleChip(Minimum, [Maximum,Average])"
+        >
+          <ion-label>Minimum</ion-label>
+        </ion-chip>
+
+        <ion-chip
+          #Maximum
+          (click)="maximum(); toggleChip(Maximum, [Minimum,Average])"
+        >
+          <ion-label>Maximum</ion-label>
+        </ion-chip>
+        <ion-chip
+          #Average
+          (click)="average(); toggleChip(Average, [Minimum, Maximum])"
+        >
+          <ion-label>Average</ion-label>
+        </ion-chip>
+      </div>
     </div>
   </ion-header>
   <ion-card class="welcome-card">
     <ion-card-header>
-      <ion-card-subtitle>Number of Viewers per season for</ion-card-subtitle>
-      <ion-card-title>Game of Thrones</ion-card-title>
+      <ion-card-subtitle
+        >Temperature over the last {{interval}}</ion-card-subtitle
+      >
     </ion-card-header>
     <ion-card-content>
       <canvas #chart></canvas>
     </ion-card-content>
   </ion-card>
+  <ion-title>{{displayData}}</ion-title>
 </ion-content>
