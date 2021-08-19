@@ -1,20 +1,35 @@
-<div>
-  <ion-button (click)="dismiss()">Close</ion-button>
+<div class="modalContent">
+  <ion-button class="button.close" (click)="dismiss()"
+    ><ion-icon name="arrow-undo"></ion-icon
+  ></ion-button>
   <div>
     <h1>Connected devices</h1>
-    <ul *ngFor="let device of devices">
-      <!-- <h2>{{i}}</h2>
-         -->
-      <ion-icon name="close-circle" (click)="disconnect(device.id)"></ion-icon>
-      <li>
-        {{ device.name }}
-      </li>
-      <li>
-        {{ device.id }}
-      </li>
-      <li>
-        {{ device.rssi }}
-      </li>
-    </ul>
+    <ion-content class="device">
+      <ion-virtual-scroll [items]="connectedDevices" approxItemHeight="15vh">
+        <div class="deviceCard" *virtualItem="let device">
+          <ion-icon
+            class="closeIcon"
+            name="close-circle"
+            (click)="disconnect(device.id)"
+          ></ion-icon>
+          <div class="deviceContent">
+            <span>{{ device.device.name }}</span>
+            <span>{{ device.device.id }}</span>
+            <span>{{ device.device.rssi }}</span>
+          </div>
+        </div>
+      </ion-virtual-scroll>
+    </ion-content>
   </div>
+  <ion-img
+    src="https://ouch-cdn2.icons8.com/mYzUb6xLIwJvG_HeJ6eVcj6uHtmEbv90q6UnkU9MBmg/rs:fit:912:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvOTI3/LzFhMDY5MGE1LTM0/NGEtNDEwZS1iZGUw/LWVlZDE2ZDJmNjAy/Ni5zdmc.png"
+  ></ion-img>
+  <span class="credit"
+    >Illustration by
+    <a href="https://icons8.com/illustrations/author/5dca95ef01d036001426e2bc"
+      >Ivan Haidutski</a
+    >
+    from <a href="https://icons8.com/illustrations">Ouch!</a> from
+    <a href="https://icons8.com/illustrations">Ouch!</a></span
+  >
 </div>

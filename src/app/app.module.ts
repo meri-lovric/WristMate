@@ -14,9 +14,10 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { firebaseConfig } from '../environments/firebase_credentials';
+import { ConnectedDeviceComponent } from './connected-device/connected-device.component';
 @NgModule({
-  declarations: [AppComponent],
-  entryComponents: [],
+  declarations: [AppComponent, ConnectedDeviceComponent],
+  entryComponents: [ConnectedDeviceComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

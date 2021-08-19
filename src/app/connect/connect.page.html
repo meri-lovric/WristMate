@@ -1,48 +1,66 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Connect</ion-title>
-    <ion-button [routerLink]="['../']" slot="end">Back</ion-button>
+    <ion-button [routerLink]="['../']" slot="end"
+      ><ion-icon name="arrow-undo"></ion-icon
+    ></ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-button (click)="scan()"
+  <ion-button class="scanBtn" (click)="scan()"
     >Scan <ion-icon name="bluetooth"></ion-icon
   ></ion-button>
 
-  <ion-list-header>Discovered devices</ion-list-header>
-  <ion-list>
-    <ion-button (click)="listConnectedDevices()">List all devices</ion-button>
-    <ion-card-content *ngFor="let peripheral of peripherals">
-      <p (click)="connect(peripheral.id)">{{peripheral.name || "Unnamed"}}</p>
-      <p>
-        {{peripheral.id}}
-        <span *ngIf="connectedDevices.includes(peripheral.id)"></span>
-        <ion-icon name="checkmark-outline" class="good-signal"></ion-icon>
-        <ion-icon
-          name="close"
-          class="poor-signal"
-          (click)="disconnect(peripheral.id)"
-        ></ion-icon>
-      </p>
-      <p>
-        RSSI: + {{peripheral.rssi}} ><ion-icon
-          *ngIf="peripheral.rssi < -90; else goodSignal"
-          name="bar-chart"
-          slot="end"
-          class="poor-signal"
-        ></ion-icon
-        ><ng-template #goodSignal>
-          <ion-icon name="bar-chart" slot="end" class="good-signal"></ion-icon
-        ></ng-template>
-      </p>
-    </ion-card-content>
-    <!--  <ion-item (click)="connect(peripheral)"> {{peripheral}} </ion-item>
-    -->
-    <!-- <ion-label>Status message: {{statusMessage}}</ion-label>
-   --></ion-list
-  >
-
-  <!-- <div (click)="connect(peripherals[0])">Donji izbornik: {{peripherals}}</div>
- --></ion-content
->
+  <div id="connectFunctionalities">
+    <ion-content
+      class="deviceList"
+      *ngIf="peripherals.length > 0; else NoConnectedDevices"
+    >
+      <ion-virtual-scroll [items]="peripherals">
+        <ion-card class="deviceCard" *virtualItem="let peripheral">
+          <ion-card-title (click)="connect(peripheral.id)">
+            {{peripheral.device.name || "Unnamed"}}
+          </ion-card-title>
+          <ion-card-subtitle>
+            {{peripheral.device.id}}
+            <span *ngIf="peripherals.includes(peripheral.device.id)">
+              <ion-icon name="checkmark-outline" class="good-signal"></ion-icon>
+            </span>
+          </ion-card-subtitle>
+          <p>
+            RSSI: +
+            <span
+              *ngIf="peripheral.rssi < -90; else goodSignal"
+              class="poor-signal"
+              >{{peripheral.device.rssi}}</span
+            >
+            <ng-template #goodSignal>
+              <span class="good-signal"
+                >{{peripheral.device.rssi}}</span
+              ></ng-template
+            >
+          </p>
+        </ion-card>
+      </ion-virtual-scroll>
+    </ion-content>
+    <ng-template #NoConnectedDevices>
+      <div id="no-connection">
+        <ion-title>No connected devices</ion-title>
+        <ion-spinner name="dots"></ion-spinner>
+        <ion-card-subtitle>Click scan!</ion-card-subtitle>
+        <ion-img
+          src="https://ouch-cdn2.icons8.com/1ZZrDFEr7Z5IT-89YDCw610CPo2TqbQSKsej5p-bTjY/rs:fit:1216:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjgx/LzZmNDVjOWQyLWQx/ZDQtNGRlYS1iNjM5/LTBkNDMwN2E0OTRk/MS5zdmc.png"
+        ></ion-img>
+        <span class="credit"
+          >Illustration by
+          <a
+            href="https://icons8.com/illustrations/author/5eb2a7bd01d0360019f124e7"
+            >Olha Khomich</a
+          >
+          from <a href="https://icons8.com/illustrations">Ouch!</a></span
+        >
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

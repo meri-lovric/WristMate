@@ -3,6 +3,9 @@ ion-slides {
   margin-top: 10vh;
   --bullet-background-active: lightcoral;
 }
+ion-slide {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
 .swiper-slide {
   height: 50vh;
   width: -webkit-fill-available;

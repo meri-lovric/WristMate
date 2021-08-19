@@ -87,6 +87,7 @@ export class SlidesPage implements OnInit, OnDestroy {
   async presentModalDevices() {
     const modal = await this.modalController.create({
       component: ConnectedDeviceComponent,
+      backdropDismiss: true,
       componentProps: {
         devices: this.connectedDevices
       },
