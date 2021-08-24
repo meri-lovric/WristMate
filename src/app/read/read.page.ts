@@ -21,16 +21,44 @@ export class ReadPage implements OnInit {
   connected = false;
   connectedDevices: Array<{
     device: any;
-    values: Array<number>;
+    values: Array<any>;
   }> = [
-    /* {
+    {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
-      values: [36.8, 35.2, 38.0, 36, 35, 37.6, 39],
+      values: [
+        { value: 36.8, time: '12:00:00' },
+        { value: 35.2, time: '12:10:00' },
+        { value: 38.0, time: '12:20:00' },
+        { value: 36, time: '12:30:00' },
+        { value: 35, time: '12:40:00' },
+        { value: 37.6, time: '12:50:00' },
+        { value: 39, time: '13:00:00' },
+      ],
     },
     {
-      device: { id: 'D6:63:90:E4:A9:B2', name: 'Device2', rssi: '90' },
-      values: [39.8, 32.2, 33.0, 34, 38, 39.6, 37],
-    }, */
+      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
+      values: [
+        { value: 36.8, time: '12:00:00' },
+        { value: 35.2, time: '12:10:00' },
+        { value: 38.0, time: '12:20:00' },
+        { value: 36, time: '12:30:00' },
+        { value: 35, time: '12:40:00' },
+        { value: 37.6, time: '12:50:00' },
+        { value: 39, time: '13:00:00' },
+      ],
+    },
+    {
+      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
+      values: [
+        { value: 36.8, time: '12:00:00' },
+        { value: 35.2, time: '12:10:00' },
+        { value: 38.0, time: '12:20:00' },
+        { value: 36, time: '12:30:00' },
+        { value: 35, time: '12:40:00' },
+        { value: 37.6, time: '12:50:00' },
+        { value: 39, time: '13:00:00' },
+      ],
+    },
   ];
   subscription: Subscription;
   now: Date;
@@ -157,7 +185,10 @@ export class ReadPage implements OnInit {
               })
               .catch((error) => console.log(error));
             this.ngZone.run(() => {
-              connectedDevice.values.push(Number(this.readValue));
+              connectedDevice.values.push({
+                value: tempReading.value,
+                time: tempReading.time,
+              });
               console.log(this.readValue);
             });
           }

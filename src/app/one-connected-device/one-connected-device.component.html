@@ -1,0 +1,24 @@
+<ion-card-header>
+  <ion-card-title>{{ connectedDevice.device.name }}</ion-card-title>
+  <ion-card-subtitle>{{ connectedDevice.device.id }}</ion-card-subtitle>
+</ion-card-header>
+<div class="valueContainer">
+  <ion-card *ngFor="let value of connectedDevice.values">
+    <ion-card-content *ngIf="value.value < 35.5">
+      <ion-card-title class="blue">{{ value.value }}</ion-card-title>
+      <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
+    </ion-card-content>
+    <ion-card-content *ngIf="value.value >= 35.5 && value.value < 37.5">
+      <ion-card-title class="green">{{ value.value }}</ion-card-title>
+      <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
+    </ion-card-content>
+    <ion-card-content *ngIf="value.value >= 37.5 && value.value < 38.3">
+      <ion-card-title class="orange">{{ value.value }}</ion-card-title>
+      <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
+    </ion-card-content>
+    <ion-card-content *ngIf="value.value >= 38.3">
+      <ion-card-title class="red">{{ value.value }}</ion-card-title>
+      <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
+    </ion-card-content>
+  </ion-card>
+</div>

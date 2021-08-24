@@ -7,14 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { ReadPageRoutingModule } from './read-routing.module';
 
 import { ReadPage } from './read.page';
-
+import { OneConnectedDeviceComponent } from '../one-connected-device/one-connected-device.component';
+import { MultipleConnectedDevicesComponent } from '../multiple-connected-devices/multiple-connected-devices.component';
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    ReadPageRoutingModule,
+  imports: [CommonModule, FormsModule, IonicModule, ReadPageRoutingModule],
+  declarations: [
+    ReadPage,
+    OneConnectedDeviceComponent,
+    MultipleConnectedDevicesComponent,
   ],
-  declarations: [ReadPage]
+  exports: [OneConnectedDeviceComponent, MultipleConnectedDevicesComponent],
 })
-export class ReadPageModule { }
+export class ReadPageModule {}
