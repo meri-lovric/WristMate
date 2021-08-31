@@ -24,10 +24,20 @@ ion-card-content {
   display: inline-block;
   margin-left: 2%;
   margin-right: 2%;
-  width: calc(500px + 6 * ((100vw - 320px) / 680));
-  height: 25vh;
+  width: 100vw;
+  height: -webkit-fill-available;
+  position: inherit;
 }
-
+:host {
+  ion-item {
+      --border-color: white; // default underline color
+      --highlight-color-invalid: lightcoral; // invalid underline color
+      --highlight-color-valid: skyblue; // valid underline color
+  }
+}
+ion-item.item-has-focus > ion-label{
+  color: skyblue !important;
+}
 .red {
   color: red;
 }
@@ -44,8 +54,8 @@ ion-card-content {
   color: green;
 }
 ion-card {
-  overflow: auto;
-  height: 30%;
+  overflow: hidden;
+  height: 235px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,6 +78,13 @@ ion-card-subtitle {
   height: -webkit-fill-available;
   margin-top: 25%;
 }
+#commentBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3vh;
+}
 ion-button {
   --background: gold;
 }
@@ -76,9 +93,14 @@ ion-button:hover {
 }
 ion-header ion-button {
   margin-right: 2vw;
+  --background: lightskyblue;
+}
+ion-input {
+  font-family: monospace;
+  border-bottom: 1px solid lightskyblue;
 }
 .read-button {
-  margin:  2.5vh 0 .5vh 0;
+  margin: 2.5vh 0 0.5vh 0;
   align-self: center;
   width: 25%;
 }
@@ -92,11 +114,6 @@ ion-content {
 }
 ion-header ion-title {
   color: lightskyblue;
-  /* background: -webkit-linear-gradient(lightcoral, lightskyblue);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-   */
   font-family: monospace;
   font-stretch: semi-expanded;
   letter-spacing: 3vw;
@@ -124,7 +141,28 @@ ion-header {
   padding-bottom: 1vh;
 }
 ion-card-header {
+  display: flex;
   border-bottom: 0.5vw solid lightskyblue;
   border-top: 1vw solid gold;
   width: 100%;
+  justify-content: start;
+  align-items: center;
+}
+ion-checkbox {
+  margin-left: 2vw;
+}
+ion-select {
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+}
+ion-list ion-label {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: gold;
+  text-align: center;
+}
+
+google-map {
+  position: static !important;
 }

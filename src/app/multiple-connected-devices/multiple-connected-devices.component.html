@@ -13,6 +13,8 @@
         </ion-card-header>
         <ion-list>
           <ion-item *ngFor="let value of connectedDevice.values">
+            <ion-item-divider>
+
             <ion-label *ngIf="value.value < 35.5">
               <p class="blue">{{ value.value }}</p></ion-label
             >
@@ -25,6 +27,7 @@
             <ion-label *ngIf="value.value >= 38.3">
               <p class="red">{{ value.value }}</p></ion-label
             >
+            </ion-item-divider>
           </ion-item>
         </ion-list>
       </ion-card>

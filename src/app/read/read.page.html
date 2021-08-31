@@ -4,13 +4,33 @@
     ><ion-icon name="arrow-undo"></ion-icon
   ></ion-button>
 </ion-header>
+<ion-list *ngIf="connectedDevices.length > 1">
+  <ion-item>
+    <ion-label>Connected devices</ion-label>
+    <ion-select
+      placeholder="Select One"
+      interface="popover"
+      (ionChange)="onEntityChange($event)"
+      cancelText="Cancel"
+      okText="Select"
+    >
+      <ion-select-option value="all">All</ion-select-option>
+      <ion-select-option
+        *ngFor="let device of connectedDevices"
+        [value]="device.device.name"
+      >
+        {{device.device.name}}</ion-select-option
+      >
+    </ion-select>
+  </ion-item>
+</ion-list>
+
 <ion-button
   class="read-button"
   *ngIf=" connectedDevices.length > 0"
   (click)="read()"
   >Read</ion-button
 >
-
 <ion-content>
   <ng-container *ngIf="connectedDevices.length === 0;else oneConnectedDevice">
     <div id="no-connection">
@@ -32,12 +52,15 @@
   </ng-container>
   <ng-template #oneConnectedDevice>
     <ng-container
-      *ngIf="connectedDevices.length === 1;else multipleConnectedDevices"
+      *ngIf="displayMultiple === false && deviceToBeDisplayed ;else multipleConnectedDevices"
     >
-      <app-one-connected-device [connectedDevice]="connectedDevices[0]"></app-one-connected-device>
+      <app-one-connected-device
+        [connectedDevice]="deviceToBeDisplayed"
+      ></app-one-connected-device>
     </ng-container>
   </ng-template>
   <ng-template #multipleConnectedDevices>
-    <app-multiple-connected-devices [connectedDevices]="connectedDevices"></app-multiple-connected-devices>
-    </ng-template></ion-content
->
+    <app-multiple-connected-devices
+      [connectedDevices]="connectedDevices"
+    ></app-multiple-connected-devices> </ng-template
+></ion-content>

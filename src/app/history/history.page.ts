@@ -39,14 +39,14 @@ export class HistoryPage {
     device: any;
     values: Array<number>;
   }> = [
-    /* {
+     {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
       values: [36.8, 35.2, 38.0, 36, 35, 37.6, 39],
     },
     {
       device: { id: 'D6:63:90:E4:A9:B2', name: 'Device2', rssi: '90' },
       values: [39.8, 32.2, 33.0, 34, 38, 39.6, 37],
-    }, */
+    },
   ];
   constructor(db: AngularFireDatabase, private slidesService: SlidesService) {
     if (this.connectedDevices.length === 1) {

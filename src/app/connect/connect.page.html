@@ -11,38 +11,49 @@
   <ion-button class="scanBtn" (click)="scan()"
     >Scan <ion-icon name="bluetooth"></ion-icon
   ></ion-button>
-
   <div id="connectFunctionalities">
+    <ion-title>Discovered devices </ion-title>
     <ion-content
       class="deviceList"
       *ngIf="peripherals.length > 0; else NoConnectedDevices"
     >
-      <ion-virtual-scroll [items]="peripherals">
-        <ion-card class="deviceCard" *virtualItem="let peripheral">
-          <ion-card-title (click)="connect(peripheral.id)">
-            {{peripheral.device.name || "Unnamed"}}
-          </ion-card-title>
-          <ion-card-subtitle>
-            {{peripheral.device.id}}
-            <span *ngIf="peripherals.includes(peripheral.device.id)">
-              <ion-icon name="checkmark-outline" class="good-signal"></ion-icon>
-            </span>
-          </ion-card-subtitle>
-          <p>
-            RSSI: +
-            <span
-              *ngIf="peripheral.rssi < -90; else goodSignal"
-              class="poor-signal"
-              >{{peripheral.device.rssi}}</span
-            >
-            <ng-template #goodSignal>
-              <span class="good-signal"
-                >{{peripheral.device.rssi}}</span
-              ></ng-template
-            >
-          </p>
-        </ion-card>
-      </ion-virtual-scroll>
+      <div class="foundDevices" *ngFor="let peripheral of peripherals">
+          <ion-item-divider>
+            <ion-card class="deviceCard">
+              <ion-card-title (click)="connect(peripheral.id)">
+                {{peripheral.device.name || "Unnamed"}}
+                <span *ngIf="peripherals.includes(peripheral.device.id)">
+                  <ion-icon
+                    name="checkmark-outline"
+                    class="good-signal"
+                  ></ion-icon>
+                </span>
+                </ion-card-title>
+              <ion-card-subtitle>
+                {{peripheral.device.id}}
+                <span *ngIf="peripherals.includes(peripheral.device.id)">
+                  <ion-icon
+                    name="checkmark-outline"
+                    class="good-signal"
+                  ></ion-icon>
+                </span>
+              </ion-card-subtitle>
+              <p>
+                RSSI: +
+                <span
+                  *ngIf="peripheral.rssi < -90; else goodSignal"
+                  class="poor-signal"
+                  >{{peripheral.device.rssi}}</span
+                >
+                <ng-template #goodSignal>
+                  <span class="good-signal"
+                    >{{peripheral.device.rssi}}</span
+                  ></ng-template
+                >
+              </p>
+            </ion-card>
+          </ion-item-divider>
+    </div>
     </ion-content>
     <ng-template #NoConnectedDevices>
       <div id="no-connection">

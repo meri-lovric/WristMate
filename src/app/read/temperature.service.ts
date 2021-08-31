@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Temperature } from '../../templates/Temperature';
+import {Comment} from '../../templates/Comment';
 import {
   AngularFireDatabase,
   AngularFireList,
   AngularFireObject,
 } from '@angular/fire/database';
+import { StringMapWithRename } from '@angular/compiler/src/compiler_facade_interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TemperatureService {
   temperatureListRef: AngularFireList<any>;
+  commentListRef: AngularFireList<any>;
   temperatureRef: AngularFireObject<any>;
   constructor(private db: AngularFireDatabase) {}
 
@@ -29,7 +32,9 @@ export class TemperatureService {
     }); */
   }
   getTemperature(id: string) {
-    this.temperatureRef = this.db.object('/'+id+'/temperature/'+ '-MgfO9QybDID-3DDL_xb');
+    this.temperatureRef = this.db.object(
+      '/' + id + '/temperature/' + '-MgfO9QybDID-3DDL_xb'
+    );
     return this.temperatureRef;
   }
   updateTemperature(id: string, temp: Temperature) {
@@ -41,5 +46,14 @@ export class TemperatureService {
   deleteTemperature(id: string) {
     this.temperatureRef = this.db.object('/temperature/' + id);
     this.temperatureRef.remove();
+  }
+  createComment(device: string, comment: Comment){
+    this.commentListRef = this.db.list('/' + device + '/comments/');
+    return this.commentListRef.push({
+      key: comment.key,
+      comment: comment.value,
+      time: comment.time,
+      location: comment.location
+    });
   }
 }

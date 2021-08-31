@@ -42,13 +42,11 @@ export class ReadPage implements OnInit {
         { value: 35.2, time: '12:10:00' },
         { value: 38.0, time: '12:20:00' },
         { value: 36, time: '12:30:00' },
-        { value: 35, time: '12:40:00' },
-        { value: 37.6, time: '12:50:00' },
         { value: 39, time: '13:00:00' },
       ],
     },
     {
-      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
+      device: { id: 'A2:EB:EA:13:2A:E2', name: 'Device2', rssi: '20' },
       values: [
         { value: 36.8, time: '12:00:00' },
         { value: 35.2, time: '12:10:00' },
@@ -62,6 +60,8 @@ export class ReadPage implements OnInit {
   ];
   subscription: Subscription;
   now: Date;
+  displayMultiple = true;
+  deviceToBeDisplayed: any;
   constructor(
     private ble: BLE,
     private ngZone: NgZone,
@@ -84,7 +84,14 @@ export class ReadPage implements OnInit {
         }
       }
     );
+
     this.connected = this.isConnected();
+    if (this.connectedDevices.length === 1) {
+      this.displayMultiple = false;
+
+      this.deviceToBeDisplayed = this.connectedDevices[0];
+    }
+    console.log(this.displayMultiple);
   }
   getNowUTC() {
     const now = new Date();
@@ -216,56 +223,19 @@ export class ReadPage implements OnInit {
     });
     toast.present();
   }
-  newFunction() {
-    console.log('NEW FUNCTION');
-    this.ble
-      .startNotification(
-        'D6:63:90:E4:A9:B2',
-        'be940000-7333-be46-b7ae-689e71722bd5',
-        'be940001-7333-be46-b7ae-689e71722bd5'
-      )
-      .subscribe((buffer) => {
-        console.log(
-          'NEW FUNCTION:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
+
+  onEntityChange(value: any) {
+    console.log(value);
+    if (value === 'all') {
+      this.ngZone.run(() => {
+        this.displayMultiple = true;
       });
-  }
-  newFunction2() {
-    console.log('NEW FUNCTION2');
-    this.ble
-      .startNotification(
-        'D6:63:90:E4:A9:B2',
-        'be940000-7333-be46-b7ae-689e71722bd5',
-        'be940003-7333-be46-b7ae-689e71722bd5'
-      )
-      .subscribe((buffer) => {
-        console.log(
-          'NEW FUNCTION2:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
-      });
-  }
-  newFunction3() {
-    console.log('NEW FUNCTION3');
-    this.ble
-      .startNotification('D6:63:90:E4:A9:B2', 'fee7', 'fea1')
-      .subscribe((buffer) => {
-        console.log(
-          'NEW FUNCTION3:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
-      });
-  }
-  newFunction4() {
-    console.log('NEW FUNCTION4');
-    this.ble
-      .startNotification('D6:63:90:E4:A9:B2', 'fee7', 'fea2')
-      .subscribe((buffer) => {
-        console.log(
-          'NEW FUNCTION4:' +
-            String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
-        );
-      });
+    } else {
+      this.displayMultiple = false;
+      this.deviceToBeDisplayed = this.connectedDevices.find(
+        (el) => el.device.name === value.detail.value
+      );
+      console.log(this.deviceToBeDisplayed);
+    }
   }
 }

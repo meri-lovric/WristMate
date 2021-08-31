@@ -1,74 +1,72 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Comment</ion-title>
-    <ion-button [routerLink]="['../']" slot="end">Back</ion-button>
+    <ion-button [routerLink]="['../']" slot="end">
+      <ion-icon name="arrow-undo"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
+<ion-list *ngIf="connectedDevices.length > 1">
+  <ion-item>
+    <ion-label>Connected devices</ion-label>
+    <ion-select
+      placeholder="Select One"
+      interface="popover"
+      (ionChange)="onEntityChange($event)"
+      cancelText="Cancel"
+      okText="Select"
+    >
+      <ion-select-option
+        *ngFor="let device of connectedDevices"
+        [value]="device.device.name"
+      >
+        {{device.device.name}}</ion-select-option
+      >
+    </ion-select>
+  </ion-item>
+</ion-list>
 
 <ion-content>
-  <p *ngIf="submitAttempt" style="color: #ea6153">
-    Please fill out all details accurately.
-  </p>
+  <div id="commentBody">
+    <p *ngIf="submitFailed" style="color: #ea6153">
+      Please fill out all details accurately.
+    </p>
 
-  <ion-list lines="none">
-    <form [formGroup]="commentForm">
-      <ion-item>
-        <ion-label position="floating">First Name</ion-label>
-        <ion-input
-          formControlName="firstName"
-          type="text"
-          [class.invalid]="!commentForm.controls.firstName.valid && (commentForm.controls.firstName.dirty || submitAttempt)"
-        ></ion-input>
-      </ion-item>
-
-      <ion-item
-        *ngIf="!commentForm.controls.firstName.valid  && (commentForm.controls.firstName.dirty || submitAttempt)"
-      >
-        <p>Please enter a valid name.</p>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Last Name</ion-label>
-        <ion-input
-          formControlName="lastName"
-          type="text"
-          [class.invalid]="!commentForm.controls.lastName.valid && (commentForm.controls.age.dirty || submitAttempt)"
-        ></ion-input>
-      </ion-item>
-
-      <ion-item
-        *ngIf="!commentForm.controls.lastName.valid  && (commentForm.controls.lastName.dirty || submitAttempt)"
-      >
-        <p>Please enter a valid name.</p>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Age</ion-label>
-        <ion-input
-          formControlName="age"
-          type="number"
-          [class.invalid]="!commentForm.controls.age.valid && (commentForm.controls.age.dirty || submitAttempt)"
-        ></ion-input>
-      </ion-item>
-
-      <ion-item
-        *ngIf="!commentForm.controls.age.valid  && (commentForm.controls.age.dirty || submitAttempt)"
-      >
-        <p>Please enter a valid age.</p>
-      </ion-item>
-    </form>
-  </ion-list>
-  <ion-button (click)="save()">Submit</ion-button>
-
-  <ion-card>
+    <ion-list lines="none">
+      <form [formGroup]="commentForm">
+        <ion-item>
+          <ion-label position="stacked">Write additional information</ion-label>
+          <ion-input
+            formControlName="firstName"
+            type="text"
+            placeholder="Enter Input"
+            maxlength="250"
+            minLength="5"
+            required="true"
+            [(ngModel)]="inputValue"
+            (keyup.enter)="save()"
+          ></ion-input>
+        </ion-item>
+      </form>
+    </ion-list>
+    <ion-button (click)="save()">Submit</ion-button>
     <ion-card-header>
-      <ion-card-subtitle> <button ion-button color="light" full (click)="testMarker()">Test Marker</button></ion-card-subtitle>
-      <ion-card-title><ion-checkbox></ion-checkbox>
+      <ion-card-subtitle> Include location?</ion-card-subtitle>
+      <ion-card-title
+        ><ion-checkbox
+          [(ngModel)]="isChecked"
+          (click)="testMarker()"
+        ></ion-checkbox>
       </ion-card-title>
     </ion-card-header>
-  
-    <ion-card-content id="map">
-        <google-map apiKey="AIzaSyBg9U2b9FFVLpxjF786Q5UKTmi_uIynp_o"></google-map>
-    </ion-card-content>
-  </ion-card>
+
+    <ion-card>
+      <ion-card-content id="map">
+        <google-map
+          apiKey="AIzaSyBg9U2b9FFVLpxjF786Q5UKTmi_uIynp_o"
+          position=""
+        ></google-map>
+      </ion-card-content>
+    </ion-card>
+  </div>
 </ion-content>

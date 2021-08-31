@@ -28,7 +28,7 @@ ion-card {
   align-items: center;
   font-family: monospace;
   font-variant-caps: all-small-caps;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  box-shadow: none;
 }
 ion-card-title {
   font-family: monospace;
@@ -51,7 +51,7 @@ ion-button {
   --background: gold;
   margin-bottom: 5%;
 }
-.scanBtn{
+.scanBtn {
   width: 80%;
   margin: 10%;
 }
@@ -68,7 +68,7 @@ ion-header ion-button {
 ion-content {
   display: flex;
   justify-content: center;
-  height: 500px;
+  height: 60vh;
 }
 .header-md::after {
   background-image: none;
@@ -91,6 +91,7 @@ div ion-title {
   font-weight: 800;
   letter-spacing: 5px;
   color: gold;
+  text-align: center;
 }
 ion-spinner {
   color: goldenrod;
@@ -107,8 +108,11 @@ ion-card-header {
   border-top: 1vw solid gold;
   width: 100%;
 }
-ion-button {
+ion-content ion-button {
   --background: gold;
+}
+ion-button {
+  --background: lightskyblue;
 }
 body {
   font-family: "Roboto", sans-serif;
@@ -148,6 +152,9 @@ body {
   padding: 30px 30px 70px;
   border: 2px solid #ffefd575;
 }
+.foundDevices {
+  margin: 20px;
+}
 .credit {
   color: lightgrey;
   font: status-bar;
@@ -169,8 +176,11 @@ ion-virtual-scroll {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 ion-virtual-scroll ion-card {
-  border:1px solid skyblue;
+  //border: 1px solid skyblue;
   margin-left: 18%;
+}
+ion-item-divider {
+  color: skyblue;
 }
 p {
   font-size: large;
