@@ -6,10 +6,13 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SlidesService {
   connectedDevicesArray: Array<any> = [];
+  chosenUnit = false;
   private messageSource = new BehaviorSubject([]);
+  private unitSource = new BehaviorSubject(false);
   // eslint-disable-next-line @typescript-eslint/member-ordering
   currentMessage = this.messageSource.asObservable();
-
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  currentUnit = this.unitSource.asObservable();
   private slides: Slide[] = [
     {
       id: 'slide1',
@@ -40,6 +43,11 @@ export class SlidesService {
   constructor() {}
   getAllSlides() {
     return [...this.slides];
+  }
+  toggleUnit(isChecked: boolean) {
+    this.chosenUnit = isChecked;
+    this.unitSource.next(this.chosenUnit);
+    console.log(this.chosenUnit);
   }
   changeMessage(connectedDevice: any) {
     this.connectedDevicesArray.push(connectedDevice);

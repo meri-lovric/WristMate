@@ -15,9 +15,12 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 
 import { firebaseConfig } from '../environments/firebase_credentials';
 import { ConnectedDeviceComponent } from './connected-device/connected-device.component';
+import { SettingsComponent } from './settings/settings.component';
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
-  declarations: [AppComponent, ConnectedDeviceComponent],
-  entryComponents: [ConnectedDeviceComponent],
+  declarations: [AppComponent, ConnectedDeviceComponent, SettingsComponent] ,
+  entryComponents: [ConnectedDeviceComponent, SettingsComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
@@ -26,6 +29,7 @@ import { ConnectedDeviceComponent } from './connected-device/connected-device.co
     AngularFireAuthModule,
     AngularFireDatabaseModule,
     AngularFireStorageModule,
+    FormsModule
   ],
   providers: [
     BLE,

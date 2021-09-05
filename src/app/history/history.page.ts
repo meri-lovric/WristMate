@@ -9,7 +9,6 @@ import { BLE } from '@ionic-native/ble/';
 import { IonChip, NavController, NavParams } from '@ionic/angular';
 import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import { TemperatureService } from '../read/temperature.service';
 import { Observable, Subscription } from 'rxjs';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { map } from 'rxjs/operators';

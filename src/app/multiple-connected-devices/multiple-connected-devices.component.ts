@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SlidesService } from '../slides/slides.service';
 
 @Component({
   selector: 'app-multiple-connected-devices',
@@ -7,9 +9,15 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class MultipleConnectedDevicesComponent implements OnInit {
   @Input() connectedDevices: any;
-  constructor() {}
+  subscription: Subscription;
+  tempUnit: boolean;
 
-  ngOnInit() {
-    console.log(this.connectedDevices);
-  }
+  constructor(    private slidesService: SlidesService
+    ) {}
+  ngOnInit() {    this.subscription = this.slidesService.currentUnit.subscribe(
+    (chosenUnit) => {
+      this.tempUnit = chosenUnit;
+    }
+  );
+}
 }

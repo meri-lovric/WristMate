@@ -11,7 +11,7 @@ import { SlidesService } from '../slides/slides.service';
 })
 export class ConnectPage implements OnInit, OnDestroy {
   peripherals: Array<any> = [
-    {
+    /* {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
       values: [36.8, 35.2, 38.0, 36, 35, 37.6, 39],
     },
@@ -47,7 +47,7 @@ export class ConnectPage implements OnInit, OnDestroy {
     {
       device: { id: 'D6:63:90:E4:A9:B2', name: 'Device2', rssi: '90' },
       values: [39.8, 32.2, 33.0, 34, 38, 39.6, 37],
-    },
+    }, */
   ];
   statusMessage: string;
   subscription: Subscription;

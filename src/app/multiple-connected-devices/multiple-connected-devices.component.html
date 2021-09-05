@@ -11,25 +11,50 @@
           <ion-card-title>{{ connectedDevice.device.name }}</ion-card-title>
           <ion-card-subtitle>{{ connectedDevice.device.id }}</ion-card-subtitle>
         </ion-card-header>
-        <ion-list>
+        <ion-list *ngIf="tempUnit === false; else fahrenheit">
           <ion-item *ngFor="let value of connectedDevice.values">
             <ion-item-divider>
-
-            <ion-label *ngIf="value.value < 35.5">
-              <p class="blue">{{ value.value }}</p></ion-label
-            >
-            <ion-label *ngIf="value.value >= 35.5 && value.value < 37.5">
-              <p class="green">{{ value.value }}</p></ion-label
-            >
-            <ion-label *ngIf="value.value >= 37.5 && value.value < 38.3">
-              <p class="orange">{{ value.value }}</p></ion-label
-            >
-            <ion-label *ngIf="value.value >= 38.3">
-              <p class="red">{{ value.value }}</p></ion-label
-            >
+              <ion-label *ngIf="value.value < 35.5">
+                <p class="blue">{{ value.value }}°C</p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 35.5 && value.value < 37.5">
+                <p class="green">{{ value.value }}°C</p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 37.5 && value.value < 38.3">
+                <p class="orange">{{ value.value }}°C</p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 38.3">
+                <p class="red">{{ value.value }}°C</p></ion-label
+              >
             </ion-item-divider>
           </ion-item>
         </ion-list>
+        <ng-template #fahrenheit>
+          <ion-item *ngFor="let value of connectedDevice.values">
+            <ion-item-divider>
+              <ion-label *ngIf="value.value < 35.5">
+                <p class="blue">
+                  {{ (value.value * 1.8 + 32).toFixed(2) }}°F
+                </p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 35.5 && value.value < 37.5">
+                <p class="green">
+                  {{ (value.value * 1.8 + 32).toFixed(2) }}°F
+                </p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 37.5 && value.value < 38.3">
+                <p class="orange">
+                  {{ (value.value * 1.8 + 32).toFixed(2) }}°F
+                </p></ion-label
+              >
+              <ion-label *ngIf="value.value >= 38.3">
+                <p class="red">
+                  {{ (value.value * 1.8 + 32).toFixed(2) }}°F
+                </p></ion-label
+              >
+            </ion-item-divider>
+          </ion-item>
+        </ng-template>
       </ion-card>
     </ion-col>
   </ion-row>

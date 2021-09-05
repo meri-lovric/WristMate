@@ -1,0 +1,154 @@
+ion-button {
+  --background: coral;
+}
+body {
+  font-family: "Roboto", sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.deviceContent {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 15%;
+  height: 15vh;
+  width: 75%;
+  font-size: smaller;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10%;
+  border: 1px solid skyblue;
+}
+.deviceCard {
+  display: flex;
+  justify-content: center;
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+  border-bottom: 1px solid lightcoral;
+}
+ion-content {
+  height: 40vh;
+  width: 65vw;
+}
+.closeIcon {
+  position: relative;
+  /* align-self: flex-end; */
+  left: 80%;
+  color: lightcoral;
+  box-shadow: 0px 5px 1px -5px darksalmon;
+}
+.modalContent {
+  align-self: center;
+  position: relative;
+  top: 5vh;
+  height: 60vh;
+  width: 85vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+  border-radius: 20px;
+  padding: 30px 30px 70px;
+  background-color: rgba(240, 128, 128, 0.548);
+}
+.credit {
+  color: lightgrey;
+  font: status-bar;
+}
+h1 {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: coral;
+  margin-left: 20vw;
+}
+
+ion-img {
+  height: 60%;
+}
+ion-virtual-scroll {
+  background-color: rgba(240, 128, 128, 0.548);
+}
+
+ion-input {
+  font-family: monospace;
+  background: rgba(245, 245, 245, 0.76);
+}
+ion-list ion-label {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: white;
+  text-align: center;
+  white-space: break-spaces;
+
+  min-width: min-content;
+}
+
+ion-select {
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+  white-space: pre-line;
+  min-width: min-content;
+  --placeholder-color: white;
+  --placeholder-opacity: 70;
+}
+ion-item {
+  --background: coral;
+}
+ion-list {
+  background-color: coral;
+}
+
+ion-popover {
+  --background: lightcoral;
+}
+ion-toggle {
+  --background: lightcoral;
+  --background-checked: whitesmoke;
+  --handle-width: 50%;
+  --handle-background: no-repeat center/100%
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 50 50' style='background-color:white'%3E%3Ctext style='font-size: 32px; font-family:monospace'  fill='coral' x='50%' y='50%' alignment-baseline='central' text-anchor='middle' %3E°C%3C/text%3E%3C/svg%3E");
+  --handle-background-checked: no-repeat center/100%
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 50 50' style='background-color:coral'%3E%3Ctext style='font-size: 32px;font-family:monospace' fill='white' x='50%' y='50%' alignment-baseline='central' text-anchor='middle' %3E°F%3C/text%3E%3C/svg%3E");
+}
+ion-infinite-scroll {
+  width: fit-content;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-content: center;
+}
+ion-infinte-scroll ion-button {
+  width: 75%;
+  height: fit-content;
+  padding: 10px;
+  font-size: xx-small;
+}
+
+.deviceCard ion-label {
+  width: 45%;
+  color: coral;
+  text-align: center;
+  align-self: flex-start;
+}
+
+.deviceCard ion-button {
+  font-size: 12px;
+}
+.title{
+  color: white;
+    /* align-self: auto; */
+    /* text-align: center; */
+    margin-bottom: 5%;
+    width:fit-content;
+}
+span{
+  display: flex;
+}

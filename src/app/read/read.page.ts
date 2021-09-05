@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BLE } from '@ionic-native/ble/ngx';
 import { NavController, NavParams, ToastController } from '@ionic/angular';
 import { Temperature } from '../../templates/Temperature';
-import { TemperatureService } from './temperature.service';
+import { TemperatureService } from '../services/temperature.service';
 import { v4 as uuidv4 } from 'uuid';
 import { SlidesService } from '../slides/slides.service';
 import { Subscription } from 'rxjs';
@@ -19,6 +19,7 @@ export class ReadPage implements OnInit {
   currentValue: number;
   values: number[] = [];
   connected = false;
+  tempUnit: boolean;
   connectedDevices: Array<{
     device: any;
     values: Array<any>;
@@ -84,6 +85,12 @@ export class ReadPage implements OnInit {
         }
       }
     );
+    this.subscription = this.slidesService.currentUnit.subscribe(
+      (chosenUnit) => {
+        this.tempUnit = chosenUnit;
+      }
+    );
+    console.log('Choosen unit:', this.tempUnit);
 
     this.connected = this.isConnected();
     if (this.connectedDevices.length === 1) {
@@ -174,9 +181,16 @@ export class ReadPage implements OnInit {
             !isNaN(Number(this.readValue))
           );
           if (!isNaN(Number(this.readValue)) && this.readValue.length > 1) {
+            // mozda dodaj manje od neke velicine
+            let tempValue;
+            if (this.tempUnit) {
+              tempValue = this.convertToFahrenheit(Number(this.readValue));
+            } else {
+              tempValue = Number(this.readValue);
+            }
             const tempReading = {
               key: new Date().getTime(),
-              value: Number(this.readValue),
+              value: tempValue,
               time: this.now.toUTCString(),
             };
             console.log(
@@ -237,5 +251,8 @@ export class ReadPage implements OnInit {
       );
       console.log(this.deviceToBeDisplayed);
     }
+  }
+  convertToFahrenheit(celsius: number) {
+    return celsius * 1.8 + 32;
   }
 }

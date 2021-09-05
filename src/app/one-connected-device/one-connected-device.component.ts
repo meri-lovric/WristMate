@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SlidesService } from '../slides/slides.service';
 
 @Component({
   selector: 'app-one-connected-device',
@@ -7,7 +9,15 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class OneConnectedDeviceComponent implements OnInit {
   @Input() connectedDevice: any;
-  constructor() {}
+  subscription: Subscription;
+  tempUnit: boolean;
 
-  ngOnInit() {}
+  constructor(    private slidesService: SlidesService
+    ) {}
+  ngOnInit() {    this.subscription = this.slidesService.currentUnit.subscribe(
+    (chosenUnit) => {
+      this.tempUnit = chosenUnit;
+    }
+  );
+}
 }

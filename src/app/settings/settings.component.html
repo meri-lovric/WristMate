@@ -1,0 +1,111 @@
+<div class="modalContent">
+  <ion-button></ion-button>
+  <ion-button class="button.close" (click)="dismiss()"
+    ><ion-icon name="arrow-undo"></ion-icon
+  ></ion-button>
+  <div>
+    <h1>Settings</h1>
+    <div class="deviceCard">
+      <ion-label class="title" position="stacked">Temperature Unit</ion-label>
+      <ion-toggle
+        [(ngModel)]="tempUnit"
+        (ionChange)="toggleUnit()"
+      ></ion-toggle>
+    </div>
+    <div class="deviceCard">
+      <ion-label class="title" position="stacked">Alert type</ion-label>
+
+      <span>
+        <ion-chip>Vibration</ion-chip>
+        <ion-chip>Sound</ion-chip></span
+      >
+    </div>
+    <ion-content class="device">
+      <ion-list *ngIf="connectedDevices.length > 0">
+        <ion-item>
+          <ion-label>Connected devices</ion-label>
+          <ion-select
+            placeholder="Select One"
+            interface="popover"
+            (ionChange)="onChooseDevice($event)"
+            cancelText="Cancel"
+            okText="Select"
+          >
+            <ion-select-option
+              *ngFor="let device of connectedDevices"
+              [value]="device.device.name"
+            >
+              {{ device.device.name }}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+      </ion-list>
+
+      <ion-infinite-scroll approxItemHeight="10vh">
+        <div class="deviceCard">
+          <ion-label position="stacked">Device name</ion-label>
+          <ion-input
+            [(ngModel)]="inputName"
+            (keyup.enter)="changeName()"
+          ></ion-input>
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">User name</ion-label>
+          <ion-input
+            [(ngModel)]="userName"
+            (keyup.enter)="changeUserName()"
+          ></ion-input>
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">Age</ion-label>
+          <span>
+            <ion-button size="large" (click)="showPicker()">
+              Age Picker
+            </ion-button>
+          </span>
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">Room</ion-label>
+          <ion-input
+            [(ngModel)]="room"
+            (keyup.enter)="changeRoom()"
+          ></ion-input>
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">State</ion-label>
+          <span>
+            <ion-chip>Bad</ion-chip>
+            <ion-chip>Okay</ion-chip>
+            <ion-chip>Good</ion-chip></span
+          >
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">Height</ion-label>
+          <span>
+            <ion-button size="large" (click)="showPicker()">
+              Age Picker
+            </ion-button>
+          </span>
+        </div>
+        <div *ngIf="displaySettings" class="deviceCard">
+          <ion-label position="stacked">Weight</ion-label>
+          <span>
+            <ion-button size="large" (click)="showPicker()">
+              Age Picker
+            </ion-button>
+          </span>
+        </div>
+      </ion-infinite-scroll>
+    </ion-content>
+  </div>
+  <ion-img
+    src="https://ouch-cdn2.icons8.com/jMwvmSKRxlBwT1MaiehKqk_BrklTYOK4peMmEWZrX58/rs:fit:1216:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNTcw/L2YxMzc3NDlhLTUx/MjAtNDhmYi05YjUy/LTM2ZDI3ZmMxMzdm/ZS5zdmc.png"
+  ></ion-img>
+  <span class="credit"
+    >Illustration by
+    <a href="https://icons8.com/illustrations/author/5e7e24ce01d0360013bb7479"
+      >Natasha Remarchuk</a
+    >
+    from <a href="https://icons8.com/illustrations">Ouch!</a></span
+  >
+</div>

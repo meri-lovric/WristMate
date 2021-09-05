@@ -9,7 +9,7 @@ import { ToastController } from '@ionic/angular';
 import { GoogleMapsComponent } from '../google-maps/google-maps.component';
 import { Subscription } from 'rxjs';
 import { SlidesService } from '../slides/slides.service';
-import { TemperatureService } from '../read/temperature.service';
+import { CommentService } from '../services/comment.service';
 import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
 import { Comment } from '../../templates/Comment';
 import { Plugins } from '@capacitor/core';
@@ -78,7 +78,7 @@ export class CommentPage {
   constructor(
     public formBuilder: FormBuilder,
     private slidesService: SlidesService,
-    private tempService: TemperatureService,
+    private commentService: CommentService,
     private toastController: ToastController
   ) /*   private geolocation: Geolocation
    */ {
@@ -133,7 +133,7 @@ export class CommentPage {
     }
     if (commentObject) {
       try {
-        this.tempService.createComment(
+        this.commentService.createComment(
           this.selectedDevice.device.id,
           commentObject
         );

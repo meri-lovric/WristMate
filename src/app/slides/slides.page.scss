@@ -50,7 +50,7 @@ ion-card-subtitle {
   margin-top: 5%;
   color: grey;
 }
-ion-icon {
+ion-content ion-icon {
   width: 100%;
   height: 90%;
   color: ghostwhite;
@@ -103,7 +103,7 @@ ion-card-subtitle {
   margin-top: 25%;
 }
 ion-button {
-  --background: gold;
+  --background: coral;
 }
 ion-button:hover {
   transform: scale(1.2);
@@ -115,7 +115,7 @@ ion-badge {
   position: relative;
   top: -2em;
   left: 16em;
-  --background: lightcoral;
+  --background: gold;
 }
 .read-button {
   margin: 2.5vh 0 0.5vh 0;
