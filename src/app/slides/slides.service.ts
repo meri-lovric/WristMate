@@ -7,12 +7,16 @@ import { BehaviorSubject } from 'rxjs';
 export class SlidesService {
   connectedDevicesArray: Array<any> = [];
   chosenUnit = false;
+  alertType: string;
   private messageSource = new BehaviorSubject([]);
   private unitSource = new BehaviorSubject(false);
+  private alertTypeSource = new BehaviorSubject('sound');
   // eslint-disable-next-line @typescript-eslint/member-ordering
   currentMessage = this.messageSource.asObservable();
   // eslint-disable-next-line @typescript-eslint/member-ordering
   currentUnit = this.unitSource.asObservable();
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  currentAlertType = this.alertTypeSource.asObservable();
   private slides: Slide[] = [
     {
       id: 'slide1',
@@ -52,5 +56,9 @@ export class SlidesService {
   changeMessage(connectedDevice: any) {
     this.connectedDevicesArray.push(connectedDevice);
     this.messageSource.next(this.connectedDevicesArray);
+  }
+  changeAlertType(type: string) {
+    this.alertType = type;
+    this.alertTypeSource.next(this.alertType);
   }
 }

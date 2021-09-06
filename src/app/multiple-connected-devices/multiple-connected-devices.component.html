@@ -20,10 +20,13 @@
               <ion-label *ngIf="value.value >= 35.5 && value.value < 37.5">
                 <p class="green">{{ value.value }}°C</p></ion-label
               >
-              <ion-label *ngIf="value.value >= 37.5 && value.value < 38.3">
+              <ion-label
+                *ngIf="value.value >= 37.5 && value.value < 38.3"
+                (after-if)="fireAlert()"
+              >
                 <p class="orange">{{ value.value }}°C</p></ion-label
               >
-              <ion-label *ngIf="value.value >= 38.3">
+              <ion-label *ngIf="value.value >= 38.3" (after-if)="fireAlert()">
                 <p class="red">{{ value.value }}°C</p></ion-label
               >
             </ion-item-divider>

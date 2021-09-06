@@ -6,7 +6,11 @@
   <div>
     <h1>Settings</h1>
     <div class="deviceCard">
-      <ion-label class="title" position="stacked">Temperature Unit</ion-label>
+    <ion-button (click)="openModal()">Add new profile</ion-button>
+    </div>
+
+    <div class="deviceCard">
+      <ion-label class="title temperatureUnit" position="stacked">Temperature Unit</ion-label>
       <ion-toggle
         [(ngModel)]="tempUnit"
         (ionChange)="toggleUnit()"
@@ -16,10 +20,18 @@
       <ion-label class="title" position="stacked">Alert type</ion-label>
 
       <span>
-        <ion-chip>Vibration</ion-chip>
-        <ion-chip>Sound</ion-chip></span
+        <ion-chip (click)="changeAlertType('vibration')">Vibration</ion-chip>
+        <ion-chip (click)="changeAlertType('sound')">Sound</ion-chip></span
       >
     </div>
+    <div class="deviceCard">
+      <ion-label position="stacked">Device name</ion-label>
+      <ion-input
+        [(ngModel)]="inputName"
+        (keyup.enter)="changeName()"
+      ></ion-input>
+    </div>
+
     <ion-content class="device">
       <ion-list *ngIf="connectedDevices.length > 0">
         <ion-item>
@@ -42,20 +54,6 @@
       </ion-list>
 
       <ion-infinite-scroll approxItemHeight="10vh">
-        <div class="deviceCard">
-          <ion-label position="stacked">Device name</ion-label>
-          <ion-input
-            [(ngModel)]="inputName"
-            (keyup.enter)="changeName()"
-          ></ion-input>
-        </div>
-        <div *ngIf="displaySettings" class="deviceCard">
-          <ion-label position="stacked">User name</ion-label>
-          <ion-input
-            [(ngModel)]="userName"
-            (keyup.enter)="changeUserName()"
-          ></ion-input>
-        </div>
         <div *ngIf="displaySettings" class="deviceCard">
           <ion-label position="stacked">Age</ion-label>
           <span>
@@ -81,21 +79,15 @@
         </div>
         <div *ngIf="displaySettings" class="deviceCard">
           <ion-label position="stacked">Height</ion-label>
-          <span>
-            <ion-button size="large" (click)="showPicker()">
-              Age Picker
-            </ion-button>
-          </span>
+          <ion-input type="number" (keyup.enter)="changeHeight()"
+          [(ngModel)] ="height"></ion-input>
         </div>
         <div *ngIf="displaySettings" class="deviceCard">
           <ion-label position="stacked">Weight</ion-label>
-          <span>
-            <ion-button size="large" (click)="showPicker()">
-              Age Picker
-            </ion-button>
-          </span>
+          <ion-input type="number"(keyup.enter)="changeWeight()"
+          [(ngModel)]="weight"></ion-input>
         </div>
-      </ion-infinite-scroll>
+        </ion-infinite-scroll>
     </ion-content>
   </div>
   <ion-img

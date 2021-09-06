@@ -13,11 +13,14 @@
         <ion-card-title class="green">{{ value.value }}°C</ion-card-title>
         <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
       </ion-card-content>
-      <ion-card-content *ngIf="value.value >= 37.5 && value.value < 38.3">
+      <ion-card-content
+        *ngIf="value.value >= 37.5 && value.value < 38.3"
+        (after-if)="fireAlert()"
+      >
         <ion-card-title class="orange">{{ value.value }}°C</ion-card-title>
         <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
       </ion-card-content>
-      <ion-card-content *ngIf="value.value >= 38.3">
+      <ion-card-content *ngIf="value.value >= 38.3" (after-if)="fireAlert()">
         <ion-card-title class="red">{{ value.value }}°C</ion-card-title>
         <ion-card-subtitle>{{ value.time }}</ion-card-subtitle>
       </ion-card-content>

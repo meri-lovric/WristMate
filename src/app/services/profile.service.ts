@@ -51,13 +51,42 @@ export class ProfileService {
             if ((el as any).braceletName === id) {
               this.profile = el as any;
               console.log(this.profile);
-              }
+            }
           });
         } else {
-          this.profile=null;
+          this.profile = null;
         }
       });
-      return this.profile;
+    return this.profile;
+  }
+  updateProfile(profile: string, valueToUpdate: any, value: any) {
+    switch (valueToUpdate) {
+      case 'age': {
+        return this.temperatureRef.update({
+          age: value,
+        });
+      }
+      case 'height': {
+        return this.temperatureRef.update({
+          height: value,
+        });
+      }
+      case 'weight': {
+        return this.temperatureRef.update({
+          weight: value,
+        });
+      }
+      case 'state': {
+        return this.temperatureRef.update({
+          state: value,
+        });
+      }
+      case 'room': {
+        return this.temperatureRef.update({
+          room: value,
+        });
+      }
+    }
   }
   /*  updateTemperature(id: string, temp: Temperature) {
     return this.temperatureRef.update({

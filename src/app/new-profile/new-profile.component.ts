@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
+import { BLE } from '@ionic-native/ble/ngx';
 import {
   AlertController,
   ModalController,
   PickerController,
 } from '@ionic/angular';
-import { BLE } from '@ionic-native/ble/ngx';
 import { Subscription } from 'rxjs';
-import { SlidesService } from '../slides/slides.service';
-import { ProfileService } from '../services/profile.service';
 import { Profile } from '../../templates/Profile';
+import { ProfileService } from '../services/profile.service';
+import { SlidesService } from '../slides/slides.service';
 import { PickerOptions } from '@ionic/core';
-import { NewProfileComponent } from '../new-profile/new-profile.component';
+
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss'],
+  selector: 'app-new-profile',
+  templateUrl: './new-profile.component.html',
+  styleUrls: ['./new-profile.component.scss'],
 })
-export class SettingsComponent implements OnInit {
+export class NewProfileComponent implements OnInit {
   connectedDevices: Array<any> = [
     {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
@@ -50,7 +50,6 @@ export class SettingsComponent implements OnInit {
   displaySettings = false;
   public tempUnit = false;
   public alertType: string;
-  profile: any;
   userName: string;
   age: number;
   room: string;
@@ -130,16 +129,11 @@ export class SettingsComponent implements OnInit {
     console.log(this.selectedDevice);
     console.log(value.detail.value);
     console.log(this.selectedDevice.device.id);
-    this.profile = this.profileService.getProfile(
+    const profile = this.profileService.getProfile(
       this.selectedDevice.device.id
     );
-    console.log(this.profile);
-    if (this.profile != null) {
-      this.displaySettings = true;
-    } else {
-      this.displaySettings = false;
-      alert('No profile connected this bracelet.');
-    }
+    console.log(profile);
+    this.displaySettings = true;
   }
   changeName() {
     console.log(this.inputName);
@@ -172,19 +166,11 @@ export class SettingsComponent implements OnInit {
     this.profileService.createProfile('F6:EB:EA:13:2A:E2', profile);
   }
   changeUserName() {}
-  changeRoom() {
-    this.profileService.updateProfile(this.profile.name, 'room', this.room);
-  }
-  changeHeight() {
-    this.profileService.updateProfile(this.profile.name, 'height', this.height);
-  }
-  changeWeight() {
-    this.profileService.updateProfile(this.profile.name, 'weight', this.weight);
-  }
+  changeRoom() {}
   changeAlertType(type: string) {
     this.slidesService.changeAlertType(type);
   }
-  async showPicker() {
+  async showAgePicker() {
     const options: PickerOptions = {
       buttons: [
         {
@@ -194,7 +180,7 @@ export class SettingsComponent implements OnInit {
         {
           text: 'Ok',
           handler: (value: any) => {
-            this.profileService.updateProfile(this.profile.name, 'age', value);
+            this.age = value;
           },
         },
       ],
@@ -221,5 +207,29 @@ export class SettingsComponent implements OnInit {
       component: NewProfileComponent,
     });
     return await modal.present();
+  }
+  createNewProfile() {
+    let profile = new Profile();
+    profile = {
+      key: new Date().getTime(),
+      name: this.userName,
+      age: this.age,
+      room: this.room ? this.room : null,
+      state: 'okay',
+      height: this.height,
+      weight: this.weight,
+      braceletName: this.selectedDevice.device.name,
+    };
+    try {
+      this.profileService.createProfile(this.selectedDevice.device.id, profile);
+    } catch {
+      console.log('Error creating user');
+    } finally {
+      this.userName = '';
+      this.age = null;
+      this.room = '';
+      this.height = null;
+      this.weight = null;
+    }
   }
 }

@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-title>New profile</ion-title>
+  <ion-button class="button.close" (click)="dismiss()"
+    ><ion-icon name="arrow-undo"></ion-icon
+  ></ion-button>
+</ion-header>
+<ion-content class="device">
+  <ion-list>
+    <ion-item>
+      <ion-label>Connected devices</ion-label>
+      <ion-select
+        placeholder="Select One"
+        interface="popover"
+        (ionChange)="onChooseDevice($event)"
+        cancelText="Cancel"
+        okText="Select"
+      >
+        <ion-select-option
+          *ngFor="let device of connectedDevices"
+          [value]="device.device.name"
+        >
+          {{ device.device.name }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-infinite-scroll>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">User name</ion-label>
+      <ion-input
+        [(ngModel)]="userName"
+        (keyup.enter)="changeUserName()"
+      ></ion-input>
+    </div>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">Age</ion-label>
+      <span>
+        <ion-button size="large" (click)="showAgePicker()">
+          Age Picker
+        </ion-button>
+      </span>
+    </div>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">Room</ion-label>
+      <ion-input [(ngModel)]="room" (keyup.enter)="changeRoom()"></ion-input>
+    </div>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">State</ion-label>
+      <span>
+        <ion-chip>Bad</ion-chip>
+        <ion-chip>Okay</ion-chip>
+        <ion-chip>Good</ion-chip></span
+      >
+    </div>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">Height</ion-label>
+      <ion-input type="number" [(ngModel)]="height"></ion-input>
+    </div>
+    <div *ngIf="displaySettings" class="deviceCard">
+      <ion-label position="stacked">Weight</ion-label>
+      <ion-input type="number" [(ngModel)]="weight"></ion-input>
+    </div>
+  </ion-infinite-scroll>
+
+  <ion-button *ngIf="displaySettings" (click)="createNewProfile()"
+    >Submit</ion-button
+  >
+</ion-content>

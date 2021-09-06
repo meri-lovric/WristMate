@@ -17,10 +17,11 @@ import { firebaseConfig } from '../environments/firebase_credentials';
 import { ConnectedDeviceComponent } from './connected-device/connected-device.component';
 import { SettingsComponent } from './settings/settings.component';
 import { FormsModule } from '@angular/forms';
+import { NewProfileComponent } from './new-profile/new-profile.component';
 
 @NgModule({
-  declarations: [AppComponent, ConnectedDeviceComponent, SettingsComponent] ,
-  entryComponents: [ConnectedDeviceComponent, SettingsComponent],
+  declarations: [AppComponent, ConnectedDeviceComponent, SettingsComponent, NewProfileComponent] ,
+  entryComponents: [ConnectedDeviceComponent, SettingsComponent, NewProfileComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
