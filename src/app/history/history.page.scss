@@ -13,6 +13,14 @@
 .green {
   color: green;
 }
+
+ion-button {
+  --background: gold;
+}
+ion-row {
+  display: flex;
+  justify-content: center;
+}
 ion-card {
   overflow: auto;
   height: 30%;
@@ -48,7 +56,7 @@ ion-header ion-button {
   margin-right: 2vw;
 }
 .read-button {
-  margin:  2.5vh 0 .5vh 0;
+  margin: 2.5vh 0 0.5vh 0;
   align-self: center;
   width: 25%;
 }
@@ -86,7 +94,6 @@ div ion-title {
 ion-spinner {
   color: goldenrod;
   height: 10vh;
-  margin-top: -10vh;
 }
 ion-header {
   display: flex;
@@ -97,4 +104,36 @@ ion-card-header {
   border-bottom: 0.5vw solid lightskyblue;
   border-top: 1vw solid gold;
   width: 100%;
+}
+ion-list ion-label {
+  font: small-caption;
+  font-weight: 800;
+  letter-spacing: 5px;
+  color: gold;
+  text-align: center;
+}
+
+ion-select {
+  font-family: monospace;
+  font-variant-caps: all-small-caps;
+}
+.amcharts-LineSeries-bullets .amcharts-Circle {
+  fill-opacity: 0.5;
+  fill: red !important;
+}
+#chartdiv {
+  height: 350px;
+  width: 100%;
+}
+ion-chip {
+  --background: lightskyblue;
+  color: white;
+}
+h1{
+  background: #988ba6;
+    padding: 10px;
+    border-radius: 30%;
+    color: white;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
 }

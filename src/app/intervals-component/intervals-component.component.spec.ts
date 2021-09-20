@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MultipleDevicesPage } from './multiple-devices.page';
+import { IntervalsComponentComponent } from './intervals-component.component';
 
-describe('MultipleDevicesPage', () => {
-  let component: MultipleDevicesPage;
-  let fixture: ComponentFixture<MultipleDevicesPage>;
+describe('IntervalsComponentComponent', () => {
+  let component: IntervalsComponentComponent;
+  let fixture: ComponentFixture<IntervalsComponentComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MultipleDevicesPage ],
+      declarations: [ IntervalsComponentComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MultipleDevicesPage);
+    fixture = TestBed.createComponent(IntervalsComponentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

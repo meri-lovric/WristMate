@@ -24,19 +24,7 @@ export class ReadPage implements OnInit {
     device: any;
     values: Array<any>;
   }> = [
-    {
-      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
-      values: [
-        { value: 36.8, time: '12:00:00' },
-        { value: 35.2, time: '12:10:00' },
-        { value: 38.0, time: '12:20:00' },
-        { value: 36, time: '12:30:00' },
-        { value: 35, time: '12:40:00' },
-        { value: 37.6, time: '12:50:00' },
-        { value: 39, time: '13:00:00' },
-      ],
-    },
-    {
+    /* {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
       values: [
         { value: 36.8, time: '12:00:00' },
@@ -57,7 +45,7 @@ export class ReadPage implements OnInit {
         { value: 37.6, time: '12:50:00' },
         { value: 39, time: '13:00:00' },
       ],
-    },
+    }, */
   ];
   subscription: Subscription;
   now: Date;
@@ -80,9 +68,8 @@ export class ReadPage implements OnInit {
     this.subscription = this.slidesService.currentMessage.subscribe(
       (connectedDevices) => {
         // eslint-disable-next-line prefer-const
-        for (let device of connectedDevices) {
-          this.connectedDevices.push({ device, values: [] });
-        }
+        this.connectedDevices = connectedDevices;
+        console.log(this.connectedDevices);
       }
     );
     this.subscription = this.slidesService.currentUnit.subscribe(
@@ -104,63 +91,73 @@ export class ReadPage implements OnInit {
     const now = new Date();
     return new Date(now.getTime() + now.getTimezoneOffset() * 60000);
   }
-  connect(device: string) {
-    this.ble.connect(device).subscribe(
-      (peripheralData) => {
-        console.log(peripheralData);
-        this.statusMessage = 'connected';
-      },
-      (peripheralData) => {
-        console.log('disconnected');
-      }
-    );
+  stopNotification() {
+    this.connectedDevices.forEach((el) => {
+      this.ble.stopNotification(
+        el.device.id,
+        '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
+        '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+      );
+    });
   }
-  singleRead() {
-    for (const connectedDevice of this.connectedDevices) {
+  read() {
+    this.connectedDevices.forEach((connectedDevice) => {
+      console.log(connectedDevice);
       this.ble
-        .read(
+        .startNotification(
           connectedDevice.device.id,
           '6e400001-b5a3-f393-e0a9-e50e24dcca9e',
           '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
         )
-        .then((result) => console.log('Read result - ', result))
-        .catch((err) => console.log(err));
-      this.ble
-        .read(connectedDevice.device.id, 'fee7', 'fec9')
-        .then((result) => console.log('Read result2 - ', result))
-        .catch((err) => console.log(err));
-      this.ble
-        .read(
-          connectedDevice.device.id,
-          '0000fee7-0000-1000-8000-00805f9b34fb',
-          '0000fea1-0000-1000-8000-00805f9b34fb'
-        )
-        .then((result) => {
-          console.log('Read result3 - ', result);
-          const convertData = String.fromCharCode.apply(null, result);
-          const hexResult = [];
-          for (let i = 0; i < convertData.length; i++) {
-            const resultNumber = convertData.charCodeAt(i); //Dec
-            const str = (+resultNumber).toString(16);
-            let resultString = '';
-            if (str.length <= 1) {
-              resultString = ('0' + (+resultNumber).toString(16))
-                .toUpperCase()
-                .substring(-2); //String
+        .subscribe((buffer) => {
+          console.log(
+            'TEMP:' + String.fromCharCode.apply(null, new Uint8Array(buffer[0]))
+          );
+          this.readValue = String.fromCharCode
+            .apply(null, new Uint8Array(buffer[0]))
+            .substr(24, 5);
+          console.log(
+            'READ VALUE STRING:',
+            this.readValue,
+            '\n IS NUMBER:',
+            !isNaN(Number(this.readValue))
+          );
+          if (!isNaN(Number(this.readValue)) && this.readValue.length > 1) {
+            // mozda dodaj manje od neke velicine
+            let tempValue;
+            if (this.tempUnit) {
+              tempValue = this.convertToFahrenheit(Number(this.readValue));
             } else {
-              resultString = ('' + (+resultNumber).toString(16))
-                .toUpperCase()
-                .substring(-2); //String
+              tempValue = Number(this.readValue);
             }
-            hexResult[i] = '0x' + resultString;
+            const tempReading = {
+              key: new Date().getTime(),
+              value: tempValue,
+              time: this.now.toUTCString(),
+            };
+            console.log(
+              'Device:',
+              connectedDevice.device.id,
+              '\nRead temperature: ',
+              tempReading
+            );
+            this.tempService
+              .createTemperature(connectedDevice.device.id, tempReading)
+              .then((result) => {
+                console.log(result);
+              })
+              .catch((error) => console.log(error));
+            this.ngZone.run(() => {
+              connectedDevice.values.push({
+                value: tempReading.value,
+                time: tempReading.time,
+              });
+              console.log(this.readValue);
+            });
           }
-          console.log('hex data:::' + hexResult);
-        })
-        .catch((err) => console.log(err));
-    }
-  }
-  read() {
-    for (const connectedDevice of this.connectedDevices) {
+        });
+    });
+    /* for (let connectedDevice of this.connectedDevices) {
       this.ble
         .startNotification(
           connectedDevice.device.id,
@@ -215,6 +212,7 @@ export class ReadPage implements OnInit {
           }
         });
     }
+ */
   }
   isConnected() {
     this.connectedDevices.forEach((connectedDevice) => {

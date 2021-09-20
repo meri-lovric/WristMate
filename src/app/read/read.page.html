@@ -24,13 +24,15 @@
     </ion-select>
   </ion-item>
 </ion-list>
-
-<ion-button
-  class="read-button"
-  *ngIf=" connectedDevices.length > 0"
-  (click)="read()"
-  >Read</ion-button
->
+<ion-card-header >
+  <ion-button
+    class="read-button"
+    *ngIf=" connectedDevices.length > 0"
+    (click)="read()"
+    >Read</ion-button
+  ><ion-button  *ngIf=" connectedDevices.length > 0"
+    (click)="stopNotification()">Stop</ion-button>
+</ion-card-header>
 <ion-content>
   <ng-container *ngIf="connectedDevices.length === 0;else oneConnectedDevice">
     <div id="no-connection">

@@ -18,10 +18,11 @@ import { ConnectedDeviceComponent } from './connected-device/connected-device.co
 import { SettingsComponent } from './settings/settings.component';
 import { FormsModule } from '@angular/forms';
 import { NewProfileComponent } from './new-profile/new-profile.component';
+import { IntervalsComponent } from './intervals-component/intervals-component.component';
 
 @NgModule({
-  declarations: [AppComponent, ConnectedDeviceComponent, SettingsComponent, NewProfileComponent] ,
-  entryComponents: [ConnectedDeviceComponent, SettingsComponent, NewProfileComponent],
+  declarations: [AppComponent, ConnectedDeviceComponent, SettingsComponent, NewProfileComponent, IntervalsComponent] ,
+  entryComponents: [ConnectedDeviceComponent, SettingsComponent, NewProfileComponent, IntervalsComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

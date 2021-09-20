@@ -27,46 +27,67 @@
 </ion-list>
 
 <ion-content>
-  <div id="commentBody">
-    <p *ngIf="submitFailed" style="color: #ea6153">
-      Please fill out all details accurately.
-    </p>
+  <ng-container *ngIf="connectedDevices.length > 0;else noConnectedDevices">
+    <div id="commentBody">
+      <p *ngIf="submitFailed" style="color: #ea6153">
+        Please fill out all details accurately.
+      </p>
 
-    <ion-list lines="none">
-      <form [formGroup]="commentForm">
-        <ion-item>
-          <ion-label position="stacked">Write additional information</ion-label>
-          <ion-input
-            formControlName="firstName"
-            type="text"
-            placeholder="Enter Input"
-            maxlength="250"
-            minLength="5"
-            required="true"
-            [(ngModel)]="inputValue"
-            (keyup.enter)="save()"
-          ></ion-input>
-        </ion-item>
-      </form>
-    </ion-list>
-    <ion-button (click)="save()">Submit</ion-button>
-    <ion-card-header>
-      <ion-card-subtitle> Include location?</ion-card-subtitle>
-      <ion-card-title
-        ><ion-checkbox
-          [(ngModel)]="isChecked"
-          (click)="testMarker()"
-        ></ion-checkbox>
-      </ion-card-title>
-    </ion-card-header>
+      <ion-list lines="none">
+        <form [formGroup]="commentForm">
+          <ion-item>
+            <ion-label position="stacked"
+              >Write additional information</ion-label
+            >
+            <ion-input
+              formControlName="comment"
+              type="text"
+              placeholder="Enter Input"
+              maxlength="250"
+              minLength="5"
+              required="true"
+              [(ngModel)]="inputValue"
+              (keyup.enter)="save()"
+            ></ion-input>
+          </ion-item>
+        </form>
+      </ion-list>
+      <ion-button (click)="save()">Submit</ion-button>
+      <ion-card-header>
+        <ion-card-subtitle> Include location?</ion-card-subtitle>
+        <ion-card-title
+          ><ion-checkbox
+            [(ngModel)]="isChecked"
+            (click)="testMarker()"
+          ></ion-checkbox>
+        </ion-card-title>
+      </ion-card-header>
 
-    <ion-card>
-      <ion-card-content id="map">
-        <google-map
-          apiKey="AIzaSyBg9U2b9FFVLpxjF786Q5UKTmi_uIynp_o"
-          position=""
-        ></google-map>
-      </ion-card-content>
-    </ion-card>
-  </div>
+      <ion-card>
+        <ion-card-content id="map">
+          <google-map
+            apiKey="AIzaSyBg9U2b9FFVLpxjF786Q5UKTmi_uIynp_o"
+            position=""
+          ></google-map>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-container>
 </ion-content>
+<ng-template #noConnectedDevices>
+  <div id="no-connection">
+    <ion-title>No connected devices</ion-title>
+    <ion-spinner name="dots"></ion-spinner>
+    <ion-button [routerLink]="['../connect']">Connect here</ion-button>
+    <ion-img
+      src="https://ouch-cdn2.icons8.com/1ZZrDFEr7Z5IT-89YDCw610CPo2TqbQSKsej5p-bTjY/rs:fit:1216:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjgx/LzZmNDVjOWQyLWQx/ZDQtNGRlYS1iNjM5/LTBkNDMwN2E0OTRk/MS5zdmc.png"
+    ></ion-img>
+    <span class="credit"
+      >Illustration by
+      <a href="https://icons8.com/illustrations/author/5eb2a7bd01d0360019f124e7"
+        >Olha Khomich</a
+      >
+      from <a href="https://icons8.com/illustrations">Ouch!</a></span
+    >
+  </div>
+</ng-template>

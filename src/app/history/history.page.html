@@ -1,79 +1,95 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>History</ion-title>
-    <ion-button [routerLink]="['../']" slot="end">Back</ion-button>
-  </ion-toolbar>
+  <ion-title>History</ion-title>
+  <ion-button [routerLink]="['../']"
+    ><ion-icon name="arrow-undo"></ion-icon
+  ></ion-button>
 </ion-header>
-
 <ion-content>
-  <ion-header>
-    <ion-label>Connected devices</ion-label>
-    <div *ngIf="connectedDevices.length > 1">
-      <ion-select
-        (ionChange)="onEntityChange($event)"
-        cancelText="Cancel"
-        okText="Select"
-      >
-        <ion-select-option
-          *ngFor="let connectedDevice of connectedDevices; let i = index"
-          [value]="connectedDevice.device.name"
-          >{{connectedDevice.device.name}}</ion-select-option
+  <ng-container *ngIf="connectedDevices.length === 0;else chartContainer">
+    <div id="no-connection">
+      <ion-title>No connected devices</ion-title>
+      <ion-spinner name="dots"></ion-spinner>
+      <ion-button [routerLink]="['../connect']">Connect here</ion-button>
+      <ion-img
+        src="https://ouch-cdn2.icons8.com/1ZZrDFEr7Z5IT-89YDCw610CPo2TqbQSKsej5p-bTjY/rs:fit:1216:912/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9zdmcvNjgx/LzZmNDVjOWQyLWQx/ZDQtNGRlYS1iNjM5/LTBkNDMwN2E0OTRk/MS5zdmc.png"
+      ></ion-img>
+      <span class="credit"
+        >Illustration by
+        <a
+          href="https://icons8.com/illustrations/author/5eb2a7bd01d0360019f124e7"
+          >Olha Khomich</a
         >
-      </ion-select>
+        from <a href="https://icons8.com/illustrations">Ouch!</a></span
+      >
     </div>
-    <div *ngIf="selectedDevice">
-      <ion-chip
-        #OneHourChip
-        (click)="createGraph('1hour'); toggleChip(OneHourChip, [OneDayChip,OneWeekChip])"
-      >
-        <ion-label>1 hour</ion-label>
-      </ion-chip>
+  </ng-container>
+  <ng-template #chartContainer>
+    <ng-container *ngIf="updating;else Chart">
+      <ion-spinner name="bubbles"></ion-spinner>
+    </ng-container>
+    <ng-template #Chart>
+      <ion-list *ngIf="connectedDevices.length > 1">
+        <ion-item>
+          <ion-label>Connected devices</ion-label>
+          <ion-select
+            placeholder="{{connectedDevices[0].device.name}}"
+            interface="popover"
+            (ionChange)="onChooseDevice($event)"
+            cancelText="Cancel"
+            okText="Select"
+          >
+            <ion-select-option
+              *ngFor="let device of connectedDevices"
+              [value]="device.device.name"
+            >
+              {{device.device.name}}</ion-select-option
+            >
+          </ion-select>
+        </ion-item>
+      </ion-list>
 
-      <ion-chip
-        #OneDayChip
-        (click)="createGraph('24hours'); toggleChip(OneDayChip, [OneHourChip,OneWeekChip])"
-      >
-        <ion-label>24 hours</ion-label>
-      </ion-chip>
-      <ion-chip
-        #OneWeekChip
-        (click)="createGraph('7days'); toggleChip(OneWeekChip, [OneHourChip, OneDayChip])"
-      >
-        <ion-label>7 days</ion-label>
-      </ion-chip>
+      <ion-grid>
+        <ion-row>
+          <div *ngIf="selectedDevice">
+            <ion-chip
+              #OneHourChip
+              (click)=" toggleChip(OneHourChip, [OneDayChip,OneWeekChip], 'hour')"
+            >
+              <ion-label>1 hour</ion-label>
+            </ion-chip>
 
-      <div *ngIf="isIntervalSelected([OneDayChip, OneHourChip, OneWeekChip])">
-        <ion-chip
-          #Minimum
-          (click)="minimum(); toggleChip(Minimum, [Maximum,Average])"
-        >
-          <ion-label>Minimum</ion-label>
-        </ion-chip>
-
-        <ion-chip
-          #Maximum
-          (click)="maximum(); toggleChip(Maximum, [Minimum,Average])"
-        >
-          <ion-label>Maximum</ion-label>
-        </ion-chip>
-        <ion-chip
-          #Average
-          (click)="average(); toggleChip(Average, [Minimum, Maximum])"
-        >
-          <ion-label>Average</ion-label>
-        </ion-chip>
-      </div>
-    </div>
-  </ion-header>
-  <ion-card class="welcome-card">
-    <ion-card-header>
-      <ion-card-subtitle
-        >Temperature over the last {{interval}}</ion-card-subtitle
-      >
-    </ion-card-header>
-    <ion-card-content>
-      <canvas #chart></canvas>
-    </ion-card-content>
-  </ion-card>
-  <ion-title>{{displayData}}</ion-title>
+            <ion-chip
+              #OneDayChip
+              (click)=" toggleChip(OneDayChip, [OneHourChip,OneWeekChip], 'day' )"
+            >
+              <ion-label>1 day</ion-label>
+            </ion-chip>
+            <ion-chip
+              #OneWeekChip
+              (click)=" toggleChip(OneWeekChip, [OneHourChip, OneDayChip], 'week')"
+            >
+              <ion-label>1 week</ion-label>
+            </ion-chip>
+          </div>
+        </ion-row>
+        <ion-row>
+          <div *ngIf="selectedDevice">
+            <ion-select
+              placeholder="Average"
+              interface="popover"
+              (ionChange)="onEntityChange($event)"
+              cancelText="Cancel"
+              okText="Select"
+            >
+              <ion-select-option value="min"> Minimum</ion-select-option>
+              <ion-select-option value="max"> Maximum</ion-select-option>
+              <ion-select-option value="avg"> Average</ion-select-option>
+            </ion-select>
+          </div>
+        </ion-row>
+        <ion-row><div id="chartdiv" #chartElement></div> </ion-row>
+        <ion-row><h1>{{calculatedValue}}</h1></ion-row>
+      </ion-grid>
+    </ng-template>
+  </ng-template>
 </ion-content>

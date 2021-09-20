@@ -105,16 +105,10 @@ ion-header {
   padding-bottom: 1vh;
 }
 ion-card-header {
-  border-bottom: 0.5vw solid lightskyblue;
-  background-color: lightskyblue;
-  color: whitesmoke;
-  /* border-top: 1vw solid gold;
-   */
-  width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
 }
 ion-card {
   border: 0.1px solid skyblue;

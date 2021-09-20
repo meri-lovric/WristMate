@@ -10,7 +10,6 @@ import { GoogleMapsComponent } from '../google-maps/google-maps.component';
 import { Subscription } from 'rxjs';
 import { SlidesService } from '../slides/slides.service';
 import { CommentService } from '../services/comment.service';
-import { calcPossibleSecurityContexts } from '@angular/compiler/src/template_parser/binding_parser';
 import { Comment } from '../../templates/Comment';
 import { Plugins } from '@capacitor/core';
 import { last } from 'rxjs/operators';
@@ -34,24 +33,12 @@ export class CommentPage {
   selectedDevice: any;
   inputValue: string;
   now: Date;
-
+  locationOfDevice: any;
   connectedDevices: Array<{
     device: any;
     values: Array<any>;
   }> = [
-    {
-      device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
-      values: [
-        { value: 36.8, time: '12:00:00' },
-        { value: 35.2, time: '12:10:00' },
-        { value: 38.0, time: '12:20:00' },
-        { value: 36, time: '12:30:00' },
-        { value: 35, time: '12:40:00' },
-        { value: 37.6, time: '12:50:00' },
-        { value: 39, time: '13:00:00' },
-      ],
-    },
-    {
+    /* {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
       values: [
         { value: 36.8, time: '12:00:00' },
@@ -72,7 +59,7 @@ export class CommentPage {
         { value: 37.6, time: '12:50:00' },
         { value: 39, time: '13:00:00' },
       ],
-    },
+    }, */
   ];
 
   constructor(
@@ -80,10 +67,9 @@ export class CommentPage {
     private slidesService: SlidesService,
     private commentService: CommentService,
     private toastController: ToastController
-  ) /*   private geolocation: Geolocation
-   */ {
+  ) {
     this.commentForm = formBuilder.group({
-      firstName: [
+      comment: [
         '',
         Validators.compose([
           Validators.maxLength(30),
@@ -91,15 +77,6 @@ export class CommentPage {
           Validators.required,
         ]),
       ],
-      lastName: [
-        '',
-        Validators.compose([
-          Validators.maxLength(30),
-          Validators.pattern('[a-zA-Z ]*'),
-          Validators.required,
-        ]),
-      ],
-      age: [''],
     });
 
     setInterval(() => {
@@ -110,9 +87,7 @@ export class CommentPage {
     this.subscription = this.slidesService.currentMessage.subscribe(
       (connectedDevices) => {
         // eslint-disable-next-line prefer-const
-        for (let device of connectedDevices) {
-          this.connectedDevices.push({ device, values: [] });
-        }
+        this.connectedDevices = connectedDevices;
       }
     );
     if (this.connectedDevices.length === 1) {
@@ -126,7 +101,11 @@ export class CommentPage {
       key: new Date().getTime(),
       value: this.inputValue,
       time: this.now.toUTCString(),
-      location: null,
+      location: this.isChecked
+        ? this.locationOfDevice.coords.latitude +
+          ',' +
+          this.locationOfDevice.coords.longitude
+        : null,
     };
     if (this.isChecked) {
       commentObject.location = this.location();
@@ -155,6 +134,7 @@ export class CommentPage {
         position.coords.longitude
       );
       this.location();
+      console.log('TEST', latLng);
     });
   }
   onEntityChange(value: any) {
@@ -173,11 +153,12 @@ export class CommentPage {
   location() {
     if (this.isChecked) {
       Geolocation.getCurrentPosition().then((position) => {
+        this.locationOfDevice = position;
         const latLng = new google.maps.LatLng(
           position.coords.latitude,
           position.coords.longitude
         );
-        console.log(latLng);
+        console.log('LATLNG', latLng);
         const geocoder = new google.maps.Geocoder();
         geocoder.geocode(
           {

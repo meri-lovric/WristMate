@@ -5,8 +5,9 @@
   ></ion-button>
   <div>
     <h1>Settings</h1>
+
     <div class="deviceCard">
-    <ion-button (click)="openModal()">Add new profile</ion-button>
+    <ion-button (click)="openModalProfile()">Add new profile</ion-button>
     </div>
 
     <div class="deviceCard">
@@ -16,6 +17,9 @@
         (ionChange)="toggleUnit()"
       ></ion-toggle>
     </div>
+    <div class="deviceCard">
+      <ion-button (click)="presentPopover($event)">Set New Intervals</ion-button>
+      </div>
     <div class="deviceCard">
       <ion-label class="title" position="stacked">Alert type</ion-label>
 

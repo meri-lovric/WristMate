@@ -53,7 +53,6 @@ ion-button {
 }
 .scanBtn {
   width: 80%;
-  margin: 10%;
 }
 
 ion-header ion-button {
@@ -68,7 +67,14 @@ ion-header ion-button {
 ion-content {
   display: flex;
   justify-content: center;
-  height: 60vh;
+  height: 400px;
+  overflow: scroll;
+}
+ion-content ion-card-header{
+  display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 .header-md::after {
   background-image: none;

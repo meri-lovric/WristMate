@@ -75,14 +75,15 @@ export class ConnectPage implements OnInit, OnDestroy {
   scan() {
     this.peripherals = [];
     this.responses = [];
-    this.ble
-      .scan([], 10)
-      .subscribe((device) => this.onDeviceDiscovered(device));
+    this.ble.scan([], 10).subscribe((device) => {
+      console.log(device);
+      this.onDeviceDiscovered(device);
+    });
   }
   onDeviceDiscovered(device) {
     console.log('Discovered:', JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
-      this.peripherals.push(device);
+      this.peripherals.push({ device, values: [] });
       console.log(device);
     });
   }
@@ -90,17 +91,28 @@ export class ConnectPage implements OnInit, OnDestroy {
     this.ble.connect(device).subscribe(
       (peripheralData) => {
         console.log(peripheralData);
-        this.presentModal(peripheralData);
-        this.slidesService.changeMessage(peripheralData);
+        this.presentModal({ device: peripheralData, values: [] });
+        this.slidesService.changeMessage({
+          device: peripheralData,
+          values: [],
+        });
       },
       (peripheralData) => {
         console.log('disconnected');
       }
     );
   }
-  disconnect(device: string) {
-    this.ble.disconnect(device).then(() => {
-      console.log('Disconnected ', device);
+  disconnect(deviceMAC: string) {
+    this.ble.disconnect(deviceMAC).then(() => {
+      console.log('Disconnected ', deviceMAC);
+      this.slidesService.remove(deviceMAC);
+    });
+  }
+  disconnectAll() {
+    this.connectedDevices.forEach((el) => {
+      console.log(el.device.id);
+      this.disconnect(el.device.id);
+      this.slidesService.remove(el.device.id);
     });
   }
   async presentModal(connectedDevice: any) {
@@ -126,15 +138,6 @@ export class ConnectPage implements OnInit, OnDestroy {
     console.log('Connected devices: ', this.peripherals);
   }
   isConnected(deviceMAC: string) {
-    this.connectedDevices.forEach((el) => {
-      console.log('EL', el);
-      if (el.device.id === deviceMAC) {
-        console.log(true);
-        return true;
-      } else {
-        console.log(false);
-        return false;
-      }
-    });
+    return this.connectedDevices.some((el) => el.device.id === deviceMAC);
   }
 }

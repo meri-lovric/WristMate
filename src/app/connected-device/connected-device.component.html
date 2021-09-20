@@ -5,20 +5,21 @@
   <div>
     <h1>Connected devices</h1>
     <ion-content class="device">
-      <ion-virtual-scroll [items]="connectedDevices" approxItemHeight="15vh">
-        <div class="deviceCard" *virtualItem="let device">
-          <ion-icon
-            class="closeIcon"
-            name="close-circle"
-            (click)="disconnect(device.id)"
-          ></ion-icon>
-          <div class="deviceContent">
-            <span>{{ device.device.name }}</span>
-            <span>{{ device.device.id }}</span>
-            <span>{{ device.device.rssi }}</span>
-          </div>
+      <div *ngFor="let device of connectedDevices" class="deviceCard">
+        <ion-icon
+          class="closeIcon"
+          name="close-circle"
+          (click)="
+            setDeviceToDisconnect(device.device.id);
+            presentAlertMultipleButtons()
+          "
+        ></ion-icon>
+        <div class="deviceContent">
+          <span>{{ device.device.name }}</span>
+          <span>{{ device.device.id }}</span>
+          <span>{{ device.device.rssi }}</span>
         </div>
-      </ion-virtual-scroll>
+      </div>
     </ion-content>
   </div>
   <ion-img

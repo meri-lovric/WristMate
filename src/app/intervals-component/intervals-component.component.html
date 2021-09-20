@@ -1,0 +1,53 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>Blue</ion-col>
+    <ion-col
+      ><ion-input
+        [(ngModel)]="newBlue"
+        placeholder="{{ blue }}"
+        (keyup.enter)="setInterval('blue')"
+        type="number"
+        value="{{ blue }}"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>Green</ion-col>
+    <ion-col
+      ><ion-input
+        [(ngModel)]="newGreen"
+        placeholder="{{ green }}"
+        (keyup.enter)="setInterval('green')"
+        type="number"
+        value="{{ green }}"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>Orange</ion-col>
+    <ion-col
+      ><ion-input
+        [(ngModel)]="newOrange"
+        placeholder="{{ orange }}"
+        (keyup.enter)="setInterval('orange')"
+        type="number"
+        value="{{ orange }}"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+
+  <ion-row>
+    <ion-col>Red</ion-col>
+    <ion-col
+      ><ion-input
+        [(ngModel)]="newRed"
+        placeholder="{{ red }}"
+        (keyup.enter)="setInterval('red')"
+        type="number"
+        value="{{ red }}"
+      ></ion-input>
+    </ion-col>
+  </ion-row>
+</ion-grid>

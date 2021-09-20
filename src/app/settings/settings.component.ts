@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import {
   AlertController,
+  AnimationBuilder,
   ModalController,
   PickerController,
+  PopoverController,
 } from '@ionic/angular';
 import { BLE } from '@ionic-native/ble/ngx';
 import { Subscription } from 'rxjs';
 import { SlidesService } from '../slides/slides.service';
 import { ProfileService } from '../services/profile.service';
 import { Profile } from '../../templates/Profile';
+import { IntervalsComponent } from '../intervals-component/intervals-component.component';
 import { PickerOptions } from '@ionic/core';
 import { NewProfileComponent } from '../new-profile/new-profile.component';
 @Component({
@@ -57,17 +60,37 @@ export class SettingsComponent implements OnInit {
   state: string;
   height: number;
   weight: number;
+
   constructor(
     public modalController: ModalController,
     private ble: BLE,
     private slidesService: SlidesService,
     public alertController: AlertController,
     private profileService: ProfileService,
-    private pickerController: PickerController
-  ) {}
+    private pickerController: PickerController,
+    public popoverController: PopoverController
+  ) {
+    interface PopoverOptions {
+      component: any;
+      componentProps?: { [key: string]: any };
+      showBackdrop?: boolean;
+      backdropDismiss?: boolean;
+      translucent?: boolean;
+      cssClass?: string | string[];
+      event?: Event;
+      animated?: boolean;
+
+      mode?: 'ios' | 'md';
+      keyboardClose?: boolean;
+      id?: string;
+
+      enterAnimation?: AnimationBuilder;
+      leaveAnimation?: AnimationBuilder;
+    }
+  }
 
   ngOnInit() {
-    this.subscription = this.slidesService.currentMessage.subscribe(
+    /* this.subscription = this.slidesService.currentMessage.subscribe(
       (connectedDevices) => {
         // eslint-disable-next-line prefer-const
         for (let device of connectedDevices) {
@@ -75,7 +98,7 @@ export class SettingsComponent implements OnInit {
         }
       }
     );
-    console.log(this.tempUnit);
+     */ console.log(this.tempUnit);
   }
   dismiss() {
     // using the injected ModalController this page
@@ -158,7 +181,7 @@ export class SettingsComponent implements OnInit {
     );
   }
   send() {
-    let profile = new Profile();
+    /*  let profile = new Profile();
     profile = {
       key: new Date().getTime(),
       name: 'Meri',
@@ -170,6 +193,7 @@ export class SettingsComponent implements OnInit {
       braceletName: this.selectedDevice.device.name,
     };
     this.profileService.createProfile('F6:EB:EA:13:2A:E2', profile);
+   */
   }
   changeUserName() {}
   changeRoom() {
@@ -216,10 +240,22 @@ export class SettingsComponent implements OnInit {
     console.log(options);
     return options;
   }
-  async openModal() {
+  async openModalProfile() {
     const modal = await this.modalController.create({
       component: NewProfileComponent,
     });
     return await modal.present();
+  }
+  async presentPopover(ev: any) {
+    const popover = await this.popoverController.create({
+      component: IntervalsComponent,
+      cssClass: 'my-custom-class',
+      event: ev,
+      translucent: true
+    });
+    await popover.present();
+
+    const { role } = await popover.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
   }
 }

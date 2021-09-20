@@ -1,315 +1,288 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ElementRef,
-} from '@angular/core';
-import { BLE } from '@ionic-native/ble/';
-import { IonChip, NavController, NavParams } from '@ionic/angular';
-import { Chart, ChartTypeRegistry, registerables } from 'chart.js';
-import zoomPlugin from 'chartjs-plugin-zoom';
-import { Observable, Subscription } from 'rxjs';
-import { AngularFireDatabase } from '@angular/fire/database';
-import { map } from 'rxjs/operators';
-import { SlidesService } from '../slides/slides.service';
-import * as firebase from 'firebase';
+import { Component, OnInit, ViewChild } from '@angular/core';
 
-Chart.register(...registerables, zoomPlugin);
+import { Inject, NgZone, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ElementRef } from '@angular/core';
+// amCharts imports
+import * as am4core from '@amcharts/amcharts4/core';
+import * as am4charts from '@amcharts/amcharts4/charts';
+import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import { AngularFireDatabase } from '@angular/fire/database';
+import * as firebase from 'firebase';
+import { IonChip } from '@ionic/angular';
+import { Subscription } from 'rxjs';
+import { SlidesService } from '../slides/slides.service';
 @Component({
   selector: 'app-history',
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
 })
-export class HistoryPage {
-  @ViewChild('chart') chart;
-
-  bars: any;
-  colorArray: any;
-  values: Array<any> = [];
-  data: Observable<any[]>;
+export class HistoryPage implements OnInit {
+  @ViewChild('OneHourChip', { read: ElementRef }) hour: ElementRef;
+  @ViewChild('OneDayChip', { read: ElementRef }) day: ElementRef;
+  @ViewChild('OneWeekChip', { read: ElementRef }) week: ElementRef;
   graphValues = [];
-  labels = [];
   selectedDevice: any;
-  interval: string;
+  bullets: any;
+  updating = false;
   subscription: Subscription;
-  displayData: number;
+  calculatedValue: number;
   connectedDevices: Array<{
     device: any;
     values: Array<number>;
   }> = [
-     {
+    /* {
       device: { id: 'F6:EB:EA:13:2A:E2', name: 'Device1', rssi: '20' },
       values: [36.8, 35.2, 38.0, 36, 35, 37.6, 39],
     },
     {
       device: { id: 'D6:63:90:E4:A9:B2', name: 'Device2', rssi: '90' },
       values: [39.8, 32.2, 33.0, 34, 38, 39.6, 37],
-    },
+    }, */
   ];
-  constructor(db: AngularFireDatabase, private slidesService: SlidesService) {
-    if (this.connectedDevices.length === 1) {
-      try {
-        this.data = db
-          .list(this.connectedDevices[0].device.id + '/temperature')
-          .valueChanges();
-      } catch (error) {
-        console.log(error);
-        /* this.values.push(e.value)
-      this.graphValues = this.values[0].map((e) => e.value);
-      console.log(this.graphValues); */
-      } finally {
-        this.data.forEach((e) => this.values.push(e));
+
+  private chart: am4charts.XYChart;
+
+  constructor(
+    @Inject(PLATFORM_ID) private platformId,
+    private zone: NgZone,
+    db: AngularFireDatabase,
+    private slidesService: SlidesService
+  ) {}
+  ngOnInit(): void {
+    this.subscription = this.slidesService.currentMessage.subscribe(
+      (connectedDevices) => {
+        // eslint-disable-next-line prefer-const
+        this.connectedDevices = connectedDevices;
       }
+    );
+    this.selectedDevice = this.connectedDevices[0];
+    if (this.selectedDevice != null) {
+      this.getData('all');
+      setTimeout(() => {
+        this.createChart2();
+        this.average();
+      }, 2000);
     }
   }
-  toggleChip(chip: IonChip, otherChips: Array<IonChip>) {
-    chip.color = 'success';
-    otherChips.forEach((e) => (e.color = 'danger'));
+  browserOnly(f: () => void) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.zone.runOutsideAngular(() => {
+        f();
+      });
+    }
   }
-  onEntityChange(value: any) {
+  randomFromInterval(min, max) {
+    // min and max included
+    return Math.random() * (max - min + 1) + min;
+  }
+  isIntervalSelected(chips: Array<IonChip>) {
+    return chips.some((el) => el.color === 'success');
+  }
+  getData(interval: string) {
+    console.log(interval);
+    if (interval === 'all') {
+      firebase.default
+        .database()
+        .ref()
+        .child(this.selectedDevice.device.id + '/temperature')
+        .orderByChild('key')
+        .limitToLast(1000)
+        .on('value', (snap) => {
+          if (snap.val() != null) {
+            const tmp = Object.entries(snap.val());
+            tmp.map((el) => {
+              if (el) {
+                return el[1];
+              }
+            });
+            if (tmp) {
+              this.graphValues = tmp;
+            }
+          }
+        });
+    } else {
+      let timeFrame;
+      switch (interval) {
+        case 'hour': {
+          timeFrame = Date.now() - 60 * 60 * 1000;
+
+          break;
+        }
+        case 'day': {
+          timeFrame = Date.now() - 24 * 60 * 60 * 1000;
+
+          break;
+        }
+        case 'week': {
+          timeFrame = Date.now() - 7 * 24 * 60 * 60 * 1000;
+          break;
+        }
+      }
+      firebase.default
+        .database()
+        .ref()
+        .child(this.selectedDevice.device.id + '/temperature')
+        .orderByChild('key')
+        .startAt(timeFrame)
+        .limitToLast(1000)
+        .on('value', (snap) => {
+          if (snap.val() != null) {
+            const tmp = Object.entries(snap.val());
+            if (tmp.length > 0) {
+              this.graphValues = tmp.map((el) => {
+                if (el) {
+                  return el;
+                }
+              });
+              this.updateChart();
+            }
+          } else {
+            alert('No data in last ' + interval.slice(1));
+          }
+        });
+    }
+  }
+  onChooseDevice(value: any) {
     this.selectedDevice = this.connectedDevices.find(
       (el) => el.device.name === value.detail.value
     );
     console.log(this.selectedDevice);
     console.log(value.detail.value);
+    this.getData('all');
+    setTimeout(() => {
+      this.updateChart();
+    }, 1000);
+    this.resetChips();
+    this.average();
   }
-  isIntervalSelected(chips: Array<IonChip>) {
-    return chips.some((el) => el.color === 'success');
+  resetChips() {
+    this.hour.nativeElement.style.background = 'lightskyblue';
+    this.day.nativeElement.style.background = 'lightskyblue';
+    this.week.nativeElement.style.background = 'lightskyblue';
+  }
+  onEntityChange(value: any) {
+    console.log(value.detail.value);
+    switch (value.detail.value) {
+      case 'min': {
+        this.minimum();
+        break;
+      }
+      case 'max': {
+        this.maximum();
+        break;
+      }
+      case 'avg': {
+        this.average();
+        break;
+      }
+    }
+    console.log(this.calculatedValue);
+  }
+  toggleChip(chip: IonChip, otherChips: Array<IonChip>, chipName: string) {
+    this.average();
+
+    switch (chipName) {
+      case 'hour': {
+        this.hour.nativeElement.style.background = 'lightcoral';
+        this.day.nativeElement.style.background = 'lightskyblue';
+        this.week.nativeElement.style.background = 'lightskyblue';
+        break;
+      }
+      case 'day': {
+        this.hour.nativeElement.style.background = 'lightskyblue';
+        this.day.nativeElement.style.background = 'lightcoral';
+        this.week.nativeElement.style.background = 'lightskyblue';
+        break;
+      }
+      case 'week': {
+        this.hour.nativeElement.style.background = 'lightskyblue';
+        this.day.nativeElement.style.background = 'lightskyblue';
+        this.week.nativeElement.style.background = 'lightcoral';
+        break;
+      }
+    }
+    this.getData(chipName);
   }
   minimum() {
-    this.resetChartColors();
-    const minimum = Math.min(...this.graphValues);
-    this.bars.data.datasets[0].data.forEach((el, i) => {
-      if (el === minimum) {
-        this.bars.data.datasets[0].pointBorderColor[i] = '#cc00cc';
-      }
-    });
-    this.bars.update();
-    this.displayData = minimum;
+    const values = this.graphValues.map((el) => el[1].value);
+    const minimum = Math.min(...values).toFixed(2);
+    this.calculatedValue = parseFloat(minimum);
   }
   maximum() {
-    this.resetChartColors();
-    const maximum = Math.max(...this.graphValues);
-    this.bars.data.datasets[0].data.forEach((el, i) => {
-      if (el === maximum) {
-        this.bars.data.datasets[0].pointBorderColor[i] = '#cc00cc';
-      }
-    });
-    this.bars.update();
-    this.displayData = maximum;
-  }
-  getHourlyData(iter: number, step: number) {
-    firebase.default
-      .database()
-      .ref()
-      .child(this.selectedDevice.device.id + '/temperature')
-      .orderByChild('key')
-      .startAt(new Date().getTime() - step * iter * 3600 * 1000)
-      .on('value', (snap) => {
-        console.log(snap.val());
-        if (snap.val() === null) {
-          this.getHourlyData(++iter, step);
-        } else {
-          console.log(snap.val());
-          this.graphValues = Object.entries(snap.val());
-          this.graphValues.forEach((el, i) => {
-            this.labels.push(el[1].time.substring(17, 22));
-            console.log('EL: ', el[1].time.substring(17, 22));
-          });
-          this.graphValues = this.graphValues.map((el) => el[1].value);
-          console.log('IN FUNCTION:', this.graphValues);
-          console.log(step);
-          this.createChart('line');
-        }
-      });
-  }
-  createGraph(interval: string) {
-    if (this.bars) {
-      this.bars.destroy();
-    }
-    this.labels = [];
-    switch (interval) {
-      case '1hour': {
-        this.interval = '1 hour';
-        this.getHourlyData(1, 1);
-        break;
-      }
-      case '24hours': {
-        this.interval = '24 hours';
-        this.getHourlyData(1, 24);
-        /*  let numberOfIntervals = 144;
-        console.log('LENGTH: ', this.graphValues.length);
-        //if (this.graphValues.length < numberOfIntervals) {
-        numberOfIntervals = Math.round(
-          this.graphValues.length / numberOfIntervals
-        );
-        //}
-        this.calculateAverage(numberOfIntervals);
-        console.log('Number of intervals', numberOfIntervals);
-        */ /* this.createChart('line');
-         */ break;
-      }
-      case '7days': {
-        console.log('7days');
-        this.interval = '7 days';
-        this.getHourlyData(1, 168);
-        /*  let numberOfIntervals = 1008;
-        if (this.graphValues.length < numberOfIntervals) {
-          numberOfIntervals = Math.round(this.graphValues.length / 1008);
-          console.log('NUM', numberOfIntervals);
-        }
-        this.calculateAverage(numberOfIntervals);
-        */ /* this.createChart('line');
-         */ break;
-      }
-      default: {
-        console.log('Invalid interval');
-        this.bars.destroy();
-        break;
-      }
-    }
-  }
-  divideIntoSubarrays(intervals: number) {
-    const res = [];
-    for (let i = 0; i < this.graphValues.length; i += intervals) {
-      const chunk = this.graphValues.slice(i, i + intervals);
-      res.push(chunk);
-    }
-    console.log('res', res);
-    return res;
+    const values = this.graphValues.map((el) => el[1].value);
+
+    const maximum = Math.max(...values).toFixed(2);
+    this.calculatedValue = parseFloat(maximum);
   }
   average() {
-    const average =
-      this.graphValues.reduce((a, b) => a + b) / this.graphValues.length;
-    console.log(average);
-    this.displayData = average;
+    const values = this.graphValues.map((el) => el[1].value);
+    const average = (values.reduce((a, b) => a + b) / values.length).toFixed(2);
+    this.calculatedValue = parseFloat(average);
   }
-  ionViewDidEnter() {}
-  onInit() {
-    this.subscription = this.slidesService.currentMessage.subscribe(
-      (connectedDevices) => {
-        // eslint-disable-next-line prefer-const
-        for (let device of connectedDevices) {
-          this.connectedDevices.push({ device, values: [] });
+  updateChart() {
+    const data = [];
+    if (this.graphValues) {
+      this.graphValues.forEach((el) => {
+        if (am4core.isNumber(el[1].value)) {
+          data.push({ time: el[1].time, value: el[1].value });
         }
+      });
+    }
+
+    this.chart.data = data;
+    this.chart.validateData();
+  }
+  createChart2() {
+    // Chart code goes in here
+
+    this.browserOnly(() => {
+      am4core.useTheme(am4themes_animated);
+      const chart = am4core.create('chartdiv', am4charts.XYChart);
+      chart.paddingRight = 20;
+
+      const data = [];
+      if (this.graphValues) {
+        this.graphValues.forEach((el) => {
+          if (am4core.isNumber(el[1].value)) {
+            data.push({ time: el[1].time, value: el[1].value });
+          }
+        });
+        chart.data = data;
       }
-    );
+      const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+      dateAxis.renderer.grid.template.location = 0;
+
+      const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      valueAxis.tooltip.disabled = true;
+      valueAxis.renderer.minWidth = 35;
+
+      const series = chart.series.push(new am4charts.LineSeries());
+      series.dataFields.dateX = 'time';
+      series.dataFields.valueY = 'value';
+      series.tooltipText = '{valueY.value}';
+      series.minBulletDistance = 15;
+      series.tooltip.pointerOrientation = 'vertical';
+      series.stroke = am4core.color('#32174D');
+
+      series.bullets.push(new am4charts.CircleBullet());
+      this.bullets = series.bullets;
+      chart.cursor = new am4charts.XYCursor();
+
+      const scrollbarX = new am4charts.XYChartScrollbar();
+      scrollbarX.series.push(series);
+      chart.scrollbarX = scrollbarX;
+      this.chart = chart;
+    });
   }
-  resetChartColors() {
-    this.bars.data.datasets[0].pointBorderColor = this.graphValues.map(
-      (el) => 'rgb(38,104,129)'
-    );
-  }
-  createChart(chartType: string) {
-    if (this.bars) {
-      this.bars.destroy();
-    }
-    const backgroundColors = this.graphValues.map((value) => 'rgb(38,104,129)');
-    switch (chartType) {
-      case 'line':
-        this.bars = new Chart(this.chart.nativeElement, {
-          type: 'line',
-          data: {
-            labels: this.labels,
-            datasets: [
-              {
-                data: this.graphValues,
-                /*  backgroundColor: 'rgb(38,194,129)', // array should have same number of elements as number of dataset
-                 */ /* borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-                 */ pointBorderColor: backgroundColors,
-                pointBorderWidth: 5,
-                label: 'Temperature data',
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            elements: {
-              point: {
-                radius: 1,
-              },
-            },
-            responsive: true,
-            scales: {
-              x: {
-                ticks: {
-                  color: 'red',
-                },
-              },
-              y: {
-                min: 30,
-                max: 40,
-              },
-            },
-            plugins: {
-              zoom: {
-                zoom: {
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true,
-                  },
-                  mode: 'y',
-                },
-                pan: {
-                  enabled: true,
-                  mode: 'x',
-                  threshold: 10,
-                  /* onPanComplete(chart){
-                    console.log('Panned', chart);
-                    } */
-                },
-              },
-            },
-          },
-        });
-        break;
-      case 'bar':
-        this.bars = new Chart(this.chart.nativeElement, {
-          type: 'bar',
-          data: {
-            labels: this.labels,
-            datasets: [
-              {
-                label: 'Temperature data',
-                data: this.graphValues,
-                backgroundColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-                borderColor: 'rgb(38, 194, 129)', // array should have same number of elements as number of dataset
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            scales: {
-              x: {
-                max: 24,
-                ticks: {
-                  maxTicksLimit: 24,
-                },
-              },
-              y: {
-                //beginAtZero: true,
-                min: 30,
-                max: 40,
-              },
-            },
-            plugins: {
-              zoom: {
-                zoom: {
-                  wheel: {
-                    enabled: true,
-                  },
-                  pinch: {
-                    enabled: true,
-                  },
-                  mode: 'xy',
-                },
-              },
-            },
-          },
-        });
-    }
+
+  // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+  ngOnDestroy() {
+    // Clean up chart when the component is removed
+    this.browserOnly(() => {
+      if (this.chart) {
+        this.chart.dispose();
+      }
+    });
   }
 }
